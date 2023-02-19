@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">project1</string>
+    <string name="full_name">Full Name</string>
+    <string name="welcome_image">Two people on a hiking trail</string>
+    <string name="age">Age</string>
+    <string name="weight">Weight (lbs)</string>
+    <string name="city_country"><![CDATA[City & Country]]></string>
+    <string name="height">Height (cm)</string>
+    <string name="picture">Take A Picture</string>
+    <string name="sign_up">Sign Up</string>
+    <string-array name="activity">
+        <item>Select Activity Level</item>
+        <item>Sedentary</item>
+        <item>Light Exercise</item>
+        <item>Moderate Exercise</item>
+        <item>Heavy Exercise</item>
+        <item>Athlete</item>
+    </string-array>
 </resources>
