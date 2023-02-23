@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var heightEt: EditText? = null
     private var activitySpinner: Spinner? = null
 
+    private var menuActivityIntent: Intent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,6 +49,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         weightEt = findViewById(R.id.editTextWeight)
         heightEt = findViewById(R.id.editTextHeight)
         activitySpinner = findViewById(R.id.spinnerActivity)
+
+        menuActivityIntent = Intent(this, MenuActivity::class.java)
 
         signupButton!!.setOnClickListener(this)
         cameraButton!!.setOnClickListener(this)
@@ -71,9 +75,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (fullName.isNullOrBlank() || cityCountry.isNullOrBlank() || activityLevel == "Select Activity Level" || picturePath.isNullOrBlank() || weight == null || height == null) {
                     Toast.makeText(this@MainActivity, "Please fill out all fields and take a picture", Toast.LENGTH_SHORT).show()
                 } else {
+                    val bundle = Bundle()
+                    bundle.putString("fullName", fullName)
+                    bundle.putString("cityCountry", cityCountry)
+                    bundle.putString("activityLevel", activityLevel)
+                    bundle.putString("picturePath", picturePath)
+                    bundle.putInt("weight", weight!!)
+                    bundle.putInt("height", height!!)
 
+                    menuActivityIntent!!.putExtras(bundle)
+                    startActivity(menuActivityIntent)
                 }
-
             }
         }
     }
