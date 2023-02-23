@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var weight: Int? = null
     private var height: Int? = null
     private var activityLevel: String? = null
+    private var sex: String? = null
 
     private var picturePath: String? = null
     private var picture: Bitmap? = null
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var weightEt: EditText? = null
     private var heightEt: EditText? = null
     private var activitySpinner: Spinner? = null
+    private var sexSpinner: Spinner? = null
+
 
     private var menuActivityIntent: Intent? = null
 
@@ -49,6 +52,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         weightEt = findViewById(R.id.editTextWeight)
         heightEt = findViewById(R.id.editTextHeight)
         activitySpinner = findViewById(R.id.spinnerActivity)
+        sexSpinner = findViewById(R.id.spinnerSex)
+
 
         menuActivityIntent = Intent(this, MenuActivity::class.java)
 
@@ -69,16 +74,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 fullName = fullNameEt!!.text.toString()
                 cityCountry = cityCountryEt!!.text.toString()
                 activityLevel = activitySpinner!!.selectedItem.toString()
+                sex = sexSpinner!!.selectedItem.toString()
                 weight = weightEt!!.text.toString().toIntOrNull()
                 height = heightEt!!.text.toString().toIntOrNull()
 
-                if (fullName.isNullOrBlank() || cityCountry.isNullOrBlank() || activityLevel == "Select Activity Level" || picturePath.isNullOrBlank() || weight == null || height == null) {
+                if (fullName.isNullOrBlank() || cityCountry.isNullOrBlank() || activityLevel == "Select Activity Level" ||
+                    picturePath.isNullOrBlank() || weight == null || height == null || sex == "Select Sex") {
                     Toast.makeText(this@MainActivity, "Please fill out all fields and take a picture", Toast.LENGTH_SHORT).show()
                 } else {
                     val bundle = Bundle()
                     bundle.putString("fullName", fullName)
                     bundle.putString("cityCountry", cityCountry)
                     bundle.putString("activityLevel", activityLevel)
+                    bundle.putString("sex", sex)
                     bundle.putString("picturePath", picturePath)
                     bundle.putInt("weight", weight!!)
                     bundle.putInt("height", height!!)
