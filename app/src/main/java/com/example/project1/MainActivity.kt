@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var cityCountry: String? = null
     private var weight: Int? = null
     private var height: Int? = null
+    private var age: Int?= null
     private var activityLevel: String? = null
     private var sex: String? = null
 
@@ -77,9 +78,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 sex = sexSpinner!!.selectedItem.toString()
                 weight = weightEt!!.text.toString().toIntOrNull()
                 height = heightEt!!.text.toString().toIntOrNull()
-
+                age = ageEt!!.text.toString().toIntOrNull()
                 if (fullName.isNullOrBlank() || cityCountry.isNullOrBlank() || activityLevel == "Select Activity Level" ||
-                    picturePath.isNullOrBlank() || weight == null || height == null || sex == "Select Sex") {
+                    picturePath.isNullOrBlank() || weight == null || height == null || sex == "Select Sex" || age == null) {
                     Toast.makeText(this@MainActivity, "Please fill out all fields and take a picture", Toast.LENGTH_SHORT).show()
                 } else {
                     val bundle = Bundle()
@@ -90,6 +91,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     bundle.putString("picturePath", picturePath)
                     bundle.putInt("weight", weight!!)
                     bundle.putInt("height", height!!)
+                    bundle.putInt("age", age!!)
 
                     menuActivityIntent!!.putExtras(bundle)
                     startActivity(menuActivityIntent)
