@@ -5,7 +5,7 @@
     <string name="age">Age</string>
     <string name="weight">Weight (lbs)</string>
     <string name="city_country"><![CDATA[City & Country]]></string>
-    <string name="height">Height (cm)</string>
+    <string name="height">Height (in.)</string>
     <string name="picture">Take A Picture</string>
     <string name="sign_up">Sign Up</string>
     <string-array name="activity">
