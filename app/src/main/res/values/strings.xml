@@ -8,6 +8,7 @@
     <string name="height">Height (in.)</string>
     <string name="picture">Take A Picture</string>
     <string name="sign_up">Sign Up</string>
+    <string name="save">Save</string>
     <string-array name="activity">
         <item>Select Activity Level</item>
         <item>Sedentary</item>
