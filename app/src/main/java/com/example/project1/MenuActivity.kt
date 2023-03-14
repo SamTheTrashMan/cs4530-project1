@@ -20,6 +20,7 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     private var sex: String? = null
     private var age: Int?= null
     private var BMRVal: Double?= null
+    private var calTarget: Double?= null
     private var cityCountry: String?= null
 
 
@@ -39,6 +40,30 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
         BMR = findViewById(R.id.textViewBMR)
         BMRVal = calculateBMR()
+        if(activityLevel == "Sedentary")
+        {
+            calTarget = BMRVal!! * 1.2
+        }
+        else if(activityLevel == "Light Exercise")
+        {
+            calTarget = BMRVal!! * 1.375
+        }
+        else if (activityLevel == "Moderate Exercise")
+        {
+            calTarget = BMRVal!! * 1.55
+        }
+        else if (activityLevel == "Heavy Exercise")
+        {
+            calTarget = BMRVal!! * 1.725
+        }
+        else if (activityLevel == "Athlete")
+        {
+            calTarget = BMRVal!! * 1.9
+        }
+        else
+        {
+            calTarget = BMRVal
+        }
         BMR!!.setText(BMRVal.toString())
         picturePath = intent.getStringExtra("picturePath")
         if (picturePath != null) {
