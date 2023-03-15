@@ -34,66 +34,61 @@
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <EditText
-        android:id="@+id/editTextAge"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="16dp"
-        android:autofillHints="age"
-        android:ems="10"
-        android:hint="@string/age"
-        android:inputType="numberSigned"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextFullName" />
-
-    <EditText
         android:id="@+id/editTextCityCountry"
-        android:autofillHints="city"
         android:layout_width="155dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="100dp"
+        android:autofillHints="city"
         android:ems="10"
         android:hint="@string/city_country"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextFullName" />
 
-    <EditText
-        android:id="@+id/editTextWeight"
-        android:layout_width="102dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="16dp"
-        android:autofillHints="weight"
-        android:ems="10"
-        android:hint="@string/weight"
-        android:inputType="numberSigned"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCityCountry" />
-
-    <EditText
-        android:id="@+id/editTextHeight"
-        android:layout_width="102dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="100dp"
-        android:autofillHints="height"
-        android:ems="10"
-        android:hint="@string/height"
-        android:inputType="numberSigned"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCityCountry" />
-
     <Spinner
         android:id="@+id/spinnerActivity"
         android:layout_width="210dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:entries="@array/activity"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextWeight" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerWeight" />
+
+
+    <Spinner
+        android:id="@+id/spinnerAge"
+        android:layout_width="50dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:entries="@array/activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.277"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextFullName" />
+
+    <Spinner
+        android:id="@+id/spinnerWeight"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="18dp"
+        android:entries="@array/activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.321"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerAge" />
+
+    <Spinner
+        android:id="@+id/spinnerHeight"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="18dp"
+        android:entries="@array/activity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.681"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCityCountry" />
 
     <Button
         android:id="@+id/buttonPicture"
@@ -106,6 +101,8 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerSex" />
+
+
 
     <Button
         android:id="@+id/buttonSignUp"

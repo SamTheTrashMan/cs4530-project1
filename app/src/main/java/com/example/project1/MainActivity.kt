@@ -30,10 +30,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var cameraButton: Button? = null
     private var signupButton: Button? = null
     private var fullNameEt: EditText? = null
-    private var ageEt: EditText? = null
+    private var ageEt: Spinner? = null
     private var cityCountryEt: EditText? = null
-    private var weightEt: EditText? = null
-    private var heightEt: EditText? = null
+    private var weightEt: Spinner? = null
+    private var heightEt: Spinner? = null
     private var activitySpinner: Spinner? = null
     private var sexSpinner: Spinner? = null
 
@@ -48,10 +48,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         signupButton = findViewById(R.id.buttonSignUp)
         cameraButton = findViewById(R.id.buttonPicture)
         fullNameEt = findViewById(R.id.editTextFullName)
-        ageEt = findViewById(R.id.editTextAge)
+        ageEt = findViewById(R.id.spinnerAge)
         cityCountryEt = findViewById(R.id.editTextCityCountry)
-        weightEt = findViewById(R.id.editTextWeight)
-        heightEt = findViewById(R.id.editTextHeight)
+        weightEt = findViewById(R.id.spinnerWeight)
+        heightEt = findViewById(R.id.spinnerHeight)
         activitySpinner = findViewById(R.id.spinnerActivity)
         sexSpinner = findViewById(R.id.spinnerSex)
 
@@ -76,13 +76,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 cityCountry = cityCountryEt!!.text.toString()
                 activityLevel = activitySpinner!!.selectedItem.toString()
                 sex = sexSpinner!!.selectedItem.toString()
-                weight = weightEt!!.text.toString().toIntOrNull()
-                height = heightEt!!.text.toString().toIntOrNull()
-                age = ageEt!!.text.toString().toIntOrNull()
-                if (fullName.isNullOrBlank() || cityCountry.isNullOrBlank() || activityLevel == "Select Activity Level" ||
-                    picturePath.isNullOrBlank() || weight == null || height == null || sex == "Select Sex" || age == null) {
-                    Toast.makeText(this@MainActivity, "Please fill out all fields and take a picture", Toast.LENGTH_SHORT).show()
+                weight = weightEt!!.selectedItem.toString().toIntOrNull()
+                height = heightEt!!.selectedItem.toString().toIntOrNull()
+                age = ageEt!!.selectedItem.toString().toIntOrNull()
+                if (fullName.isNullOrBlank())  {
+                    Toast.makeText(this@MainActivity, "Please fill fill in the name field", Toast.LENGTH_SHORT).show()
                 } else {
+                    //Do we want to do it so we have a bunch of if's inside the else?
                     val bundle = Bundle()
                     bundle.putString("fullName", fullName)
                     bundle.putString("cityCountry", cityCountry)
