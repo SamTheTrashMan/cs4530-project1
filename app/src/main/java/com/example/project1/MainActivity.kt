@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private var menuActivityIntent: Intent? = null
+    private var drawerActivityIntent: Intent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +98,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         weightEt!!.adapter = weightAdapter
 
         menuActivityIntent = Intent(this, MenuActivity::class.java)
+        drawerActivityIntent = Intent(this, DrawerActivity::class.java)
 
         signupButton!!.setOnClickListener(this)
         cameraButton!!.setOnClickListener(this)
@@ -134,7 +136,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     bundle.putString("age", age)
 
                     menuActivityIntent!!.putExtras(bundle)
-                    startActivity(menuActivityIntent)
+                    drawerActivityIntent!!.putExtras(bundle)
+                    startActivity(drawerActivityIntent)
                 }
             }
         }
