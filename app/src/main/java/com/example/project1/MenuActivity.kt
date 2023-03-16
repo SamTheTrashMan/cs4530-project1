@@ -33,38 +33,43 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
         sex = intent.getStringExtra("sex")
         activityLevel = intent.getStringExtra("activityLevel")
 
-        age = intent.getIntExtra("age", 0)
-        height = intent.getIntExtra("height", 0)
-        weight = intent.getIntExtra("weight", 0)
+        age = intent.getStringExtra("age")!!.toIntOrNull()
+        height = intent.getStringExtra("height")!!.toIntOrNull()
+        weight = intent.getStringExtra("weight")!!.toIntOrNull()
         cityCountry = intent.getStringExtra("cityCountry")
 
         BMR = findViewById(R.id.textViewBMR)
-        BMRVal = calculateBMR()
-        if(activityLevel == "Sedentary")
-        {
-            calTarget = BMRVal!! * 1.2
+        if (age == null || height == null || weight == null || sex == "Select Sex") {
+            BMRVal = 0.0
+        } else {
+            BMRVal = calculateBMR()
+            if (activityLevel == "Sedentary")
+            {
+                calTarget = BMRVal!! * 1.2
+            }
+            else if(activityLevel == "Light Exercise")
+            {
+                calTarget = BMRVal!! * 1.375
+            }
+            else if (activityLevel == "Moderate Exercise")
+            {
+                calTarget = BMRVal!! * 1.55
+            }
+            else if (activityLevel == "Heavy Exercise")
+            {
+                calTarget = BMRVal!! * 1.725
+            }
+            else if (activityLevel == "Athlete")
+            {
+                calTarget = BMRVal!! * 1.9
+            }
+            else
+            {
+                calTarget = 0.0
+            }
         }
-        else if(activityLevel == "Light Exercise")
-        {
-            calTarget = BMRVal!! * 1.375
-        }
-        else if (activityLevel == "Moderate Exercise")
-        {
-            calTarget = BMRVal!! * 1.55
-        }
-        else if (activityLevel == "Heavy Exercise")
-        {
-            calTarget = BMRVal!! * 1.725
-        }
-        else if (activityLevel == "Athlete")
-        {
-            calTarget = BMRVal!! * 1.9
-        }
-        else
-        {
-            calTarget = BMRVal
-        }
-        BMR!!.setText(BMRVal.toString())
+
+        BMR!!.text = BMRVal.toString()
         picturePath = intent.getStringExtra("picturePath")
         if (picturePath != null) {
             val thumbnail = BitmapFactory.decodeFile(picturePath)
@@ -77,11 +82,9 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun calculateBMR(): Double {
         if(sex == "Male") {
-            var BMR = 66.47 + ( 6.24 * weight!!)+ ( 12.7 * height!!) - ( 6.755 * age!!)
-            return BMR
+            return 66.47 + ( 6.24 * weight!!)+ ( 12.7 * height!!) - ( 6.755 * age!!)
         }
-        var BMR = 655.1 + ( 4.35 * weight!!) + ( 4.7 * height!!) - ( 4.7 * age!!)
-        return BMR
+        return 655.1 + ( 4.35 * weight!!) + ( 4.7 * height!!) - ( 4.7 * age!!)
     }
 
     override fun onClick(view: View) {

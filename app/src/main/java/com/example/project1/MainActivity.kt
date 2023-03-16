@@ -3,28 +3,29 @@ package com.example.project1
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var fullName: String? = null
-    private var cityCountry: String? = null
-    private var weight: Int? = null
-    private var height: Int? = null
-    private var age: Int?= null
-    private var activityLevel: String? = null
-    private var sex: String? = null
+    private var cityCountry: String? = ""
+    private var weight: String? = ""
+    private var height: String? = ""
+    private var age: String?= ""
+    private var activityLevel: String? = ""
+    private var sex: String? = ""
 
-    private var picturePath: String? = null
+    private var picturePath: String? = ""
     private var picture: Bitmap? = null
 
     private var cameraButton: Button? = null
@@ -55,6 +56,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         activitySpinner = findViewById(R.id.spinnerActivity)
         sexSpinner = findViewById(R.id.spinnerSex)
 
+        val entries = ArrayList<String>()
+        entries.add("Select Age")
+        for (i in 1..65) {
+            entries.add(i.toString())
+        }
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item, entries
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ageEt!!.adapter = adapter
+
+        // Height
+        val heightEntries = ArrayList<String>()
+        heightEntries.add("Select Height")
+        for (i in 1..113) {
+            heightEntries.add(i.toString())
+        }
+        val heightAdapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            heightEntries
+        )
+        heightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        heightEt!!.adapter = heightAdapter
+
+        // Weight
+        val weightEntries = ArrayList<String>()
+        weightEntries.add("Select Weight")
+        for (i in 1..500) {
+            weightEntries.add(i.toString())
+        }
+        val weightAdapter = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
+            weightEntries
+        )
+        weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        weightEt!!.adapter = weightAdapter
 
         menuActivityIntent = Intent(this, MenuActivity::class.java)
 
@@ -76,9 +116,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 cityCountry = cityCountryEt!!.text.toString()
                 activityLevel = activitySpinner!!.selectedItem.toString()
                 sex = sexSpinner!!.selectedItem.toString()
-                weight = weightEt!!.selectedItem.toString().toIntOrNull()
-                height = heightEt!!.selectedItem.toString().toIntOrNull()
-                age = ageEt!!.selectedItem.toString().toIntOrNull()
+                weight = weightEt!!.selectedItem.toString()
+                height = heightEt!!.selectedItem.toString()
+                age = ageEt!!.selectedItem.toString()
                 if (fullName.isNullOrBlank())  {
                     Toast.makeText(this@MainActivity, "Please fill fill in the name field", Toast.LENGTH_SHORT).show()
                 } else {
@@ -89,9 +129,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     bundle.putString("activityLevel", activityLevel)
                     bundle.putString("sex", sex)
                     bundle.putString("picturePath", picturePath)
-                    bundle.putInt("weight", weight!!)
-                    bundle.putInt("height", height!!)
-                    bundle.putInt("age", age!!)
+                    bundle.putString("weight", weight)
+                    bundle.putString("height", height)
+                    bundle.putString("age", age)
 
                     menuActivityIntent!!.putExtras(bundle)
                     startActivity(menuActivityIntent)
