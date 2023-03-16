@@ -23,7 +23,6 @@ class MenuActivity : AppCompatActivity(), View.OnClickListener {
     private var calTarget: Double?= null
     private var cityCountry: String?= null
 
-
     private var BMR: TextView?= null
     private var mapsButton: Button?= null
     override fun onCreate(savedInstanceState: Bundle?) {
