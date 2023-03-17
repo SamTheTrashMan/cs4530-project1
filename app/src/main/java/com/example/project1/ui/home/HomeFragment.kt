@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.project1.R
 import com.example.project1.databinding.FragmentHomeBinding
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -143,6 +144,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
                         mainThreadHandler.post {
                             weatherData = weather
+                            val weatherJSON = JSONObject(weatherData)
+                            // Converting Kelvin to Fahrenheit
+                            val temp = (weatherJSON.getJSONObject("main").getDouble("temp") - 273.150) * 1.8 + 32
+                            val feelsLike = (weatherJSON.getJSONObject("main").getDouble("feels_like")- 273.150) * 1.8 + 32
+                            val tempMin = (weatherJSON.getJSONObject("main").getDouble("temp_min")- 273.150) * 1.8 + 32
+                            val tempMax = (weatherJSON.getJSONObject("main").getDouble("temp_max")- 273.150) * 1.8 + 32
+                            //MPS to MPH
+                            val windSpeed = weatherJSON.getJSONObject("wind").getDouble("speed") * 2.23694
                         }
                     }
                 }
