@@ -5,17 +5,20 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.project1.R
 import com.example.project1.databinding.FragmentHomeBinding
-import org.w3c.dom.Text
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.*
+import java.util.concurrent.Executors
 
 
 class HomeFragment : Fragment(), View.OnClickListener {
@@ -26,6 +29,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
     // onDestroyView.
     private val binding get() = _binding!!
     private var picturePath: String? = null
+
+    private var weatherData: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,6 +93,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         binding.textViewBMR.text = BMRVal.toString()
 
         binding.mapsButton.setOnClickListener(this)
+        binding.buttonWeather.setOnClickListener(this)
 
         return root
     }
@@ -113,7 +119,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 } else {
                     //We have to grab the search term and construct a URI object from it.
                     //We'll hardcode WEB's location here
-                    val searchUri = Uri.parse("geo:0,0?q=$cityCountry" + " Hikes")
+                    val searchUri = Uri.parse("geo:0,0?q=$cityCountry Hikes")
 
                     //Create the implicit intent
                     val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
@@ -126,6 +132,47 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     }
                 }
             }
+            R.id.buttonWeather -> {
+                if (cityCountry.isNullOrBlank()) {
+                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT).show()
+                } else {
+                    var executorService = Executors.newSingleThreadExecutor()
+                    var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
+                    executorService.execute {
+                        val weather = getWeather(cityCountry)
+
+                        mainThreadHandler.post {
+                            weatherData = weather
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private fun getWeather(cityCountry: String): String {
+        val url = URL("https://api.openweathermap.org/data/2.5/weather?q=$cityCountry&appid=99ea8382701bd7481e5ea568772f739a")
+        val connection = url.openConnection() as HttpURLConnection
+        val weather = try {
+            val inputStream = connection.inputStream
+
+            //The scanner trick: search for the next "beginning" of the input stream
+            //No need to user BufferedReader
+            val scanner = Scanner(inputStream)
+            scanner.useDelimiter("\\A")
+            val hasInput = scanner.hasNext()
+            if (hasInput) {
+                scanner.next()
+            } else {
+                null
+            }
+        } finally {
+            connection.disconnect()
+        }
+
+        if (weather != null) {
+            return weather
+        }
+        return "Not Found"
     }
 }

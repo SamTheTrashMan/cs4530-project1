@@ -34,5 +34,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Settings</string>
+    <string name="show_weather">Show Weather</string>
+    <string name="find_hikes_near_me">Find Hikes Near Me</string>
 
 </resources>
