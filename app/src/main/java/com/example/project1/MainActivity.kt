@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var activitySpinner: Spinner? = null
     private var sexSpinner: Spinner? = null
 
-
     private var menuActivityIntent: Intent? = null
     private var drawerActivityIntent: Intent? = null
 
