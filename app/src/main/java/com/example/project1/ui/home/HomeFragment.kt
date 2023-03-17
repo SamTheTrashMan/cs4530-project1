@@ -1,12 +1,16 @@
 package com.example.project1.ui.home
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.project1.R
@@ -14,7 +18,7 @@ import com.example.project1.databinding.FragmentHomeBinding
 import org.w3c.dom.Text
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), View.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -36,8 +40,6 @@ class HomeFragment : Fragment() {
         val height = intent.getStringExtra("height")!!.toIntOrNull()
         val weight = intent.getStringExtra("weight")!!.toIntOrNull()
         val cityCountry = intent.getStringExtra("cityCountry")
-
-
 
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -85,6 +87,8 @@ class HomeFragment : Fragment() {
 
         binding.textViewBMR.text = BMRVal.toString()
 
+        binding.mapsButton.setOnClickListener(this)
+
         return root
     }
 
@@ -100,5 +104,28 @@ class HomeFragment : Fragment() {
         return 655.1 + ( 4.35 * weight!!) + ( 4.7 * height!!) - ( 4.7 * age!!)
     }
 
+    override fun onClick(view: View) {
+        val cityCountry = requireActivity().intent.getStringExtra("cityCountry")
+        when (view.id) {
+            R.id.mapsButton -> {
+                if (cityCountry.isNullOrBlank()) {
+                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT).show()
+                } else {
+                    //We have to grab the search term and construct a URI object from it.
+                    //We'll hardcode WEB's location here
+                    val searchUri = Uri.parse("geo:0,0?q=$cityCountry" + " Hikes")
 
+                    //Create the implicit intent
+                    val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
+
+                    //If there's an activity associated with this intent, launch it
+                    try{
+                        startActivity(mapIntent)
+                    }catch(ex: ActivityNotFoundException){
+                        //handle errors here
+                    }
+                }
+            }
+        }
+    }
 }
