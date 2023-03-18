@@ -17,6 +17,7 @@ import com.example.project1.R
 import com.example.project1.databinding.FragmentHomeBinding
 import org.json.JSONObject
 import java.net.HttpURLConnection
+import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
@@ -65,28 +66,17 @@ class HomeFragment : Fragment(), View.OnClickListener {
             BMRVal = 0.0
         } else {
             BMRVal = calculateBMR(sex!!, weight, height, age)
-            if (activityLevel == "Sedentary")
-            {
+            if (activityLevel == "Sedentary") {
                 calTarget = BMRVal!! * 1.2
-            }
-            else if(activityLevel == "Light Exercise")
-            {
+            } else if (activityLevel == "Light Exercise") {
                 calTarget = BMRVal!! * 1.375
-            }
-            else if (activityLevel == "Moderate Exercise")
-            {
+            } else if (activityLevel == "Moderate Exercise") {
                 calTarget = BMRVal!! * 1.55
-            }
-            else if (activityLevel == "Heavy Exercise")
-            {
+            } else if (activityLevel == "Heavy Exercise") {
                 calTarget = BMRVal!! * 1.725
-            }
-            else if (activityLevel == "Athlete")
-            {
+            } else if (activityLevel == "Athlete") {
                 calTarget = BMRVal!! * 1.9
-            }
-            else
-            {
+            } else {
                 calTarget = 0.0
             }
         }
@@ -105,10 +95,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun calculateBMR(sex: String, weight: Int, height: Int, age: Int): Double {
-        if(sex == "Male") {
-            return 66.47 + ( 6.24 * weight!!)+ ( 12.7 * height!!) - ( 6.755 * age!!)
+        if (sex == "Male") {
+            return 66.47 + (6.24 * weight!!) + (12.7 * height!!) - (6.755 * age!!)
         }
-        return 655.1 + ( 4.35 * weight!!) + ( 4.7 * height!!) - ( 4.7 * age!!)
+        return 655.1 + (4.35 * weight!!) + (4.7 * height!!) - (4.7 * age!!)
     }
 
     override fun onClick(view: View) {
@@ -116,7 +106,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
         when (view.id) {
             R.id.mapsButton -> {
                 if (cityCountry.isNullOrBlank()) {
-                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     //We have to grab the search term and construct a URI object from it.
                     //We'll hardcode WEB's location here
@@ -126,32 +117,63 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     val mapIntent = Intent(Intent.ACTION_VIEW, searchUri)
 
                     //If there's an activity associated with this intent, launch it
-                    try{
+                    try {
                         startActivity(mapIntent)
-                    }catch(ex: ActivityNotFoundException){
+                    } catch (ex: ActivityNotFoundException) {
                         //handle errors here
                     }
                 }
             }
             R.id.buttonWeather -> {
                 if (cityCountry.isNullOrBlank()) {
-                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     var executorService = Executors.newSingleThreadExecutor()
                     var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
                     executorService.execute {
+
                         val weather = getWeather(cityCountry)
 
-                        mainThreadHandler.post {
-                            weatherData = weather
-                            val weatherJSON = JSONObject(weatherData)
-                            // Converting Kelvin to Fahrenheit
-                            val temp = (weatherJSON.getJSONObject("main").getDouble("temp") - 273.150) * 1.8 + 32
-                            val feelsLike = (weatherJSON.getJSONObject("main").getDouble("feels_like")- 273.150) * 1.8 + 32
-                            val tempMin = (weatherJSON.getJSONObject("main").getDouble("temp_min")- 273.150) * 1.8 + 32
-                            val tempMax = (weatherJSON.getJSONObject("main").getDouble("temp_max")- 273.150) * 1.8 + 32
-                            //MPS to MPH
-                            val windSpeed = weatherJSON.getJSONObject("wind").getDouble("speed") * 2.23694
+                        if(weather != "Not Found") {
+
+
+                            mainThreadHandler.post {
+                                weatherData = weather
+                                val weatherJSON = JSONObject(weatherData)
+                                println(weatherJSON)
+                                val errorCheck = weatherJSON.getInt("cod")
+                                println(errorCheck)
+                                if (errorCheck.toString() == "404") {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Invalid city and country",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                } else {
+                                    // Converting Kelvin to Fahrenheit
+                                    var temp = (weatherJSON.getJSONObject("main")
+                                        .getDouble("temp") - 273.150) * 1.8 + 32
+                                    val feelsLike = (weatherJSON.getJSONObject("main")
+                                        .getDouble("feels_like") - 273.150) * 1.8 + 32
+                                    var tempMin = (weatherJSON.getJSONObject("main")
+                                        .getDouble("temp_min") - 273.150) * 1.8 + 32
+                                    var tempMax = (weatherJSON.getJSONObject("main")
+                                        .getDouble("temp_max") - 273.150) * 1.8 + 32
+                                    //MPS to MPH
+                                    val windSpeed =
+                                        weatherJSON.getJSONObject("wind")
+                                            .getDouble("speed") * 2.23694
+                                    val tempInt = temp.toInt()
+                                    val tempMaxInt = tempMax.toInt()
+                                    val tempMinInt = tempMin.toInt()
+
+                                    binding.textViewCurrTemp.text = "Current Temp: $tempInt"
+                                    binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
+                                    binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
+                                }
+                            }
                         }
                     }
                 }
@@ -160,28 +182,43 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun getWeather(cityCountry: String): String {
-        val url = URL("https://api.openweathermap.org/data/2.5/weather?q=$cityCountry&appid=99ea8382701bd7481e5ea568772f739a")
-        val connection = url.openConnection() as HttpURLConnection
-        val weather = try {
-            val inputStream = connection.inputStream
+        var url: URL? = null
+        try {
 
-            //The scanner trick: search for the next "beginning" of the input stream
-            //No need to user BufferedReader
-            val scanner = Scanner(inputStream)
-            scanner.useDelimiter("\\A")
-            val hasInput = scanner.hasNext()
-            if (hasInput) {
-                scanner.next()
-            } else {
-                null
+
+            url =
+                URL("https://api.openweathermap.org/data/2.5/weather?q=${cityCountry.replace(" ", "%20")}&appid=99ea8382701bd7481e5ea568772f739a")
+            println(url)
+            val connection = url!!.openConnection() as HttpURLConnection
+            val weather = try {
+                val inputStream = connection.inputStream
+
+                //The scanner trick: search for the next "beginning" of the input stream
+                //No need to user BufferedReader
+                val scanner = Scanner(inputStream)
+                scanner.useDelimiter("\\A")
+                val hasInput = scanner.hasNext()
+                if (hasInput) {
+                    scanner.next()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {return "Not Found"}
+            finally {
+                connection.disconnect()
             }
-        } finally {
-            connection.disconnect()
-        }
 
-        if (weather != null) {
-            return weather
+            if (weather != null) {
+                println("Weather is not null")
+                return weather
+            }
+            println("Weather is null")
+            return "Not Found"
+        } catch (e: MalformedURLException) {
+            println("In catch block")
+            Toast.makeText(requireContext(), "Invalid city and country", Toast.LENGTH_SHORT).show()
         }
+        println("Past catch")
         return "Not Found"
     }
 }
