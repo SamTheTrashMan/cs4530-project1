@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/textViewBMR"
-        android:layout_width="161dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="232dp"
+        android:layout_width="386dp"
+        android:layout_height="49dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
         android:textAlignment="textEnd"
         android:textSize="34sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewPicture" />
 
     <ImageView

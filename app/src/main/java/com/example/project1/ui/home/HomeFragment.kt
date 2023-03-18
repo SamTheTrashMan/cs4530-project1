@@ -81,7 +81,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        binding.textViewBMR.text = BMRVal.toString()
+        binding.textViewBMR.text = "Cal Target: $calTarget"
 
         binding.mapsButton.setOnClickListener(this)
         binding.buttonWeather.setOnClickListener(this)
@@ -220,5 +220,22 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
         println("Past catch")
         return "Not Found"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("currTemp", binding.textViewCurrTemp.text.toString())
+        outState.putString("lowTemp", binding.textViewLowTemp.text.toString())
+        outState.putString("highTemp", binding.textViewHighTemp.text.toString())
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            binding.textViewCurrTemp.text = savedInstanceState!!.getString("currTemp")
+            binding.textViewLowTemp.text = savedInstanceState!!.getString("lowTemp")
+            binding.textViewHighTemp.text = savedInstanceState!!.getString("highTemp")
+        }
     }
 }
