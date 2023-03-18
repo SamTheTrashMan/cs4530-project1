@@ -171,7 +171,7 @@ class GalleryFragment : Fragment(), View.OnClickListener {
                     requireActivity().intent.putExtra("weight", weight)
                     requireActivity().intent.putExtra("height", height)
                     requireActivity().intent.putExtra("age", age)
-                    Toast.makeText(requireContext(),"In the else",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(),"Updated successfully!",Toast.LENGTH_SHORT).show()
 
                 }
             }

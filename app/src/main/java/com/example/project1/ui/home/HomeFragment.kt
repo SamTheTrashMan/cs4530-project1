@@ -30,8 +30,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private var picturePath: String? = null
 
+    private var picturePath: String? = null
     private var weatherData: String? = null
 
     override fun onCreateView(
@@ -136,14 +136,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
                         val weather = getWeather(cityCountry)
 
                         if(weather != "Not Found") {
-
-
                             mainThreadHandler.post {
                                 weatherData = weather
                                 val weatherJSON = JSONObject(weatherData)
                                 println(weatherJSON)
                                 val errorCheck = weatherJSON.getInt("cod")
-                                println(errorCheck)
                                 if (errorCheck.toString() == "404") {
                                     Toast.makeText(
                                         requireContext(),
@@ -174,6 +171,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
                                     binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
                                 }
                             }
+                        } else {
+                            binding.textViewCurrTemp.text = "Invalid location"
                         }
                     }
                 }
@@ -209,21 +208,18 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
 
             if (weather != null) {
-                println("Weather is not null")
                 return weather
             }
-            println("Weather is null")
             return "Not Found"
         } catch (e: MalformedURLException) {
-            println("In catch block")
             Toast.makeText(requireContext(), "Invalid city and country", Toast.LENGTH_SHORT).show()
         }
-        println("Past catch")
         return "Not Found"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
         outState.putString("currTemp", binding.textViewCurrTemp.text.toString())
         outState.putString("lowTemp", binding.textViewLowTemp.text.toString())
         outState.putString("highTemp", binding.textViewHighTemp.text.toString())
