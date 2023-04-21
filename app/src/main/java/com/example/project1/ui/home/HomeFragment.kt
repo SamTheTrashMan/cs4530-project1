@@ -183,8 +183,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private fun getWeather(cityCountry: String): String {
         var url: URL? = null
         try {
-
-
             url =
                 URL("https://api.openweathermap.org/data/2.5/weather?q=${cityCountry.replace(" ", "%20")}&appid=99ea8382701bd7481e5ea568772f739a")
             println(url)

@@ -15,9 +15,9 @@ data class UserTable(
     @field:ColumnInfo(name = "sex")
     var sex: String,
     @field:ColumnInfo(name = "weight")
-    var weight: Int,
+    var weight: String,
     @field:ColumnInfo(name = "height")
-    var height: Int,
+    var height: String,
     @field:ColumnInfo(name = "age")
-    var age: Int,
+    var age: String,
 )
