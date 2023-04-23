@@ -9,6 +9,7 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     // of those repos could be singleton.
     private var mAppRepository: AppRepository = repository
 
+
     fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
     weight: String, height: String, age: String)
     {

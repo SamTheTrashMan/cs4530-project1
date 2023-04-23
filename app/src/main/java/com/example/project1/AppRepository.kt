@@ -13,6 +13,7 @@ class AppRepository private constructor(appDao: AppDao) {
     private var mCityCountry: String? = null
     private var mActivityLevel: String? = null
     private var mSex: String? = null
+    private var mPicturePath: String ?= null
     private var mWeight: String? = null
     private var mHeight: String? = null
     private var mAge: String? = null
@@ -21,21 +22,31 @@ class AppRepository private constructor(appDao: AppDao) {
 
 
 
-    fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
+     fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
                     weight: String, height: String, age: String)
     {
-        mAppDao.insert(UserTable(fullName, cityCountry, activityLevel, sex, picturePath, weight, height, age))
+        mFullName = fullName
+        mCityCountry = cityCountry
+        mActivityLevel = activityLevel
+        mSex = sex
+        mPicturePath = picturePath
+        mWeight = weight
+        mHeight = height
+        mAge = age
+        mScope.launch (Dispatchers.IO){
+            insert()
+        }
     }
 
 
 
 
-//    @WorkerThread
-//    suspend fun insert() {
-//        if (mFullName != null) {
-//            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mWeight!!, mHeight!!, mAge!!))
-//        }
-//    }
+    @WorkerThread
+    suspend fun insert() {
+        if (mFullName != null) {
+            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mPicturePath!!, mWeight!!, mHeight!!, mAge!!))
+        }
+    }
 
     @WorkerThread
     suspend fun fetchAndParseWeatherData(location: String) {
