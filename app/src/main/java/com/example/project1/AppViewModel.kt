@@ -2,20 +2,27 @@ package com.example.project1
 
 import androidx.lifecycle.*
 
-class WeatherViewModel(repository: AppRepository) : ViewModel() {
+class AppViewModel(repository: AppRepository) : ViewModel() {
     //The singleton repository. If our app maps to one process, the recommended
     // pattern is to make repo and db singletons. That said, it's sometimes useful
     // to have more than one repo so it doesn't become a kitchen sink class, but each
     // of those repos could be singleton.
     private var mAppRepository: AppRepository = repository
+
+    fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
+    weight: String, height: String, age: String)
+    {
+        // Simply pass the location to the repository
+        mAppRepository.setUserData(fullName, cityCountry, activityLevel, sex, picturePath, weight, height, age)
+    }
 }
 
 // This factory class allows us to define custom constructors for the view model
-class WeatherViewModelFactory(private val repository: AppRepository) : ViewModelProvider.Factory {
+class AppViewModelFactory(private val repository: AppRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WeatherViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(AppViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return WeatherViewModel(repository) as T
+            return AppViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

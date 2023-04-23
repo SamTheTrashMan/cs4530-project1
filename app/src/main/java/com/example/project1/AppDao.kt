@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface AppDao {
     // Insert ignore
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(userTable: UserTable)
+    fun insert(userTable: UserTable)
 
-    @Update
+    @Update()
     fun updateUsers(vararg userTable: UserTable)
 
     // Delete all

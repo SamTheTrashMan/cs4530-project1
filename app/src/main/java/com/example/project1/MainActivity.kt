@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -40,6 +41,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private var menuActivityIntent: Intent? = null
     private var drawerActivityIntent: Intent? = null
+
+    private val mAppViewModel: AppViewModel by viewModels {
+        AppViewModelFactory((application as AppApplication).repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +128,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 if (fullName.isNullOrBlank())  {
                     Toast.makeText(this@MainActivity, "Please fill fill in the name field", Toast.LENGTH_SHORT).show()
                 } else {
+                    mAppViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
+                        picturePath!!, weight!!, height!!, age!!)
+
+
+
                     //Do we want to do it so we have a bunch of if's inside the else?
                     val bundle = Bundle()
                     bundle.putString("fullName", fullName)

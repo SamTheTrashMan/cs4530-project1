@@ -14,6 +14,8 @@ data class UserTable(
     var activityLevel: String,
     @field:ColumnInfo(name = "sex")
     var sex: String,
+    @field:ColumnInfo(name = "picturePath")
+    var picturePath: String,
     @field:ColumnInfo(name = "weight")
     var weight: String,
     @field:ColumnInfo(name = "height")

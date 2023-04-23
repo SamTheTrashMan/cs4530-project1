@@ -19,12 +19,23 @@ class AppRepository private constructor(appDao: AppDao) {
 
     private var mAppDao: AppDao = appDao
 
-    @WorkerThread
-    suspend fun insert() {
-        if (mFullName != null) {
-            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mWeight!!, mHeight!!, mAge!!))
-        }
+
+
+    fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
+                    weight: String, height: String, age: String)
+    {
+        mAppDao.insert(UserTable(fullName, cityCountry, activityLevel, sex, picturePath, weight, height, age))
     }
+
+
+
+
+//    @WorkerThread
+//    suspend fun insert() {
+//        if (mFullName != null) {
+//            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mWeight!!, mHeight!!, mAge!!))
+//        }
+//    }
 
     @WorkerThread
     suspend fun fetchAndParseWeatherData(location: String) {
