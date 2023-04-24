@@ -19,7 +19,7 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     }
 
     fun getUser(): List<UserTable> {
-        return mAppRepository.userData;
+        return mAppRepository.getUserData();
     }
 }
 

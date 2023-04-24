@@ -48,8 +48,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         val intent = requireActivity().intent
-
         val user = appViewModel.getUser()[0]
+        Log.d("User", user.fullName)
 
         val sex = user.age
         val activityLevel = user.activityLevel

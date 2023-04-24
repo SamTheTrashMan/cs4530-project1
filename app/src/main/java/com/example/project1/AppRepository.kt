@@ -21,7 +21,10 @@ class AppRepository private constructor(appDao: AppDao) {
 
     private var mAppDao: AppDao = appDao
 
-    val userData : List<UserTable> = mAppDao.getUser()
+
+    fun getUserData(): List<UserTable>{
+        return mAppDao.getUser()
+    }
 
      fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
                     weight: String, height: String, age: String)
