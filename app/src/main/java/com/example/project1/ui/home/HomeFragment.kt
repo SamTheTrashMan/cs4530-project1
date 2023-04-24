@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.HandlerCompat
@@ -48,9 +49,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val intent = requireActivity().intent
         val user = appViewModel.getUser()[0]
         Log.d("User", user.fullName)
+        Log.d("Sex", user.sex)
+        Log.d("activityLevel", user.activityLevel)
+        Log.d("age", user.age)
+        Log.d("Height", user.height)
+        Log.d("weight", user.weight)
+        Log.d("cityCountry", user.cityCountry)
 
         val sex = user.age
         val activityLevel = user.activityLevel
@@ -94,7 +100,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        Log.d("Cal Target", calTarget.toString())
         binding.textViewBMR.text = "Cal Target: $calTarget"
+        binding.textViewBMR.invalidate()
 
         binding.mapsButton.setOnClickListener(this)
         binding.buttonWeather.setOnClickListener(this)
@@ -142,54 +150,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
                         .show()
                 }
-                //else {
-//                    var executorService = Executors.newSingleThreadExecutor()
-//                    var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
-//                    executorService.execute {
-//
-//                        val weather = getWeather(cityCountry)
-//
-//                        if(weather != "Not Found") {
-//                            mainThreadHandler.post {
-//                                weatherData = weather
-//                                val weatherJSON = JSONObject(weatherData)
-//                                println(weatherJSON)
-//                                val errorCheck = weatherJSON.getInt("cod")
-//                                if (errorCheck.toString() == "404") {
-//                                    Toast.makeText(
-//                                        requireContext(),
-//                                        "Invalid city and country",
-//                                        Toast.LENGTH_SHORT
-//                                    ).show()
-//
-//                                } else {
-//                                    // Converting Kelvin to Fahrenheit
-//                                    var temp = (weatherJSON.getJSONObject("main")
-//                                        .getDouble("temp") - 273.150) * 1.8 + 32
-//                                    val feelsLike = (weatherJSON.getJSONObject("main")
-//                                        .getDouble("feels_like") - 273.150) * 1.8 + 32
-//                                    var tempMin = (weatherJSON.getJSONObject("main")
-//                                        .getDouble("temp_min") - 273.150) * 1.8 + 32
-//                                    var tempMax = (weatherJSON.getJSONObject("main")
-//                                        .getDouble("temp_max") - 273.150) * 1.8 + 32
-//                                    //MPS to MPH
-//                                    val windSpeed =
-//                                        weatherJSON.getJSONObject("wind")
-//                                            .getDouble("speed") * 2.23694
-//                                    val tempInt = temp.toInt()
-//                                    val tempMaxInt = tempMax.toInt()
-//                                    val tempMinInt = tempMin.toInt()
-//
-//                                    binding.textViewCurrTemp.text = "Current Temp: $tempInt"
-//                                    binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
-//                                    binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
-//                                }
-//                            }
-//                        } else {
-//                            binding.textViewCurrTemp.text = "Invalid location"
-//                        }
-//                    }
-//                }
+                else {
+
+                }
             }
         }
     }
