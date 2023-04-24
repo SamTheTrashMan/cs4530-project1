@@ -139,6 +139,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
                         .show()
                 } else {
+                    appViewModel.getWeather()
                     var executorService = Executors.newSingleThreadExecutor()
                     var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
                     executorService.execute {

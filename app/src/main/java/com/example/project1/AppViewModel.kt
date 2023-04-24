@@ -21,6 +21,10 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     fun getUser(): List<UserTable> {
         return mAppRepository.getUserData();
     }
+
+    fun getWeather(): String {
+        return mAppRepository.getWeatherData();
+    }
 }
 
 // This factory class allows us to define custom constructors for the view model
