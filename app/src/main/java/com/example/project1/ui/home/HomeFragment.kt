@@ -70,6 +70,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
             (binding.imageViewPicture).setImageBitmap(thumbnail)
         }
 
+        appViewModel.data.observe(viewLifecycleOwner, liveDataObserver)
+
         var BMRVal = 0.0
         var calTarget = 0.0
         if (age == null || height == null || weight == null || sex == "Select Sex") {
@@ -135,11 +137,15 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.buttonWeather -> {
+
+
+
+
+
                 if (cityCountry.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
                         .show()
                 } else {
-                    appViewModel.getWeather()
                     var executorService = Executors.newSingleThreadExecutor()
                     var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
                     executorService.execute {
@@ -243,4 +249,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
             binding.textViewHighTemp.text = savedInstanceState!!.getString("highTemp")
         }
     }
+
+    //create an observer that watches the LiveData<WeatherData> object
+    private val liveDataObserver: Observer<String> =
+        Observer { weatherData -> // Update the UI if this data variable changes
+            if (weatherData != null) {
+                mTvTemp!!.text = "" + (weatherData.temperature.temp - 273.15).roundToInt() + " C"
+                mTvHum!!.text = "" + weatherData.currentCondition.humidity + "%"
+                mTvPress!!.text = "" + weatherData.currentCondition.pressure + " hPa"
+            }
+        }
 }

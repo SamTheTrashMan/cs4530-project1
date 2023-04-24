@@ -10,6 +10,7 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     // of those repos could be singleton.
     private var mAppRepository: AppRepository = repository
 
+    private val weatherData: LiveData<String> = repository.data
 
     fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
     weight: String, height: String, age: String)
@@ -22,9 +23,8 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
         return mAppRepository.getUserData();
     }
 
-    fun getWeather(): String {
-        return mAppRepository.getWeatherData();
-    }
+    val data: LiveData<String>
+        get() = weatherData
 }
 
 // This factory class allows us to define custom constructors for the view model
