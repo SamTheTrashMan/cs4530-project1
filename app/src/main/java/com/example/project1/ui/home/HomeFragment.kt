@@ -25,6 +25,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
+import androidx.lifecycle.Observer
 
 
 class HomeFragment : Fragment(), View.OnClickListener {
@@ -137,100 +138,62 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.buttonWeather -> {
-
-
-
-
-
                 if (cityCountry.isNullOrBlank()) {
                     Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
                         .show()
-                } else {
-                    var executorService = Executors.newSingleThreadExecutor()
-                    var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
-                    executorService.execute {
-
-                        val weather = getWeather(cityCountry)
-
-                        if(weather != "Not Found") {
-                            mainThreadHandler.post {
-                                weatherData = weather
-                                val weatherJSON = JSONObject(weatherData)
-                                println(weatherJSON)
-                                val errorCheck = weatherJSON.getInt("cod")
-                                if (errorCheck.toString() == "404") {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Invalid city and country",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                } else {
-                                    // Converting Kelvin to Fahrenheit
-                                    var temp = (weatherJSON.getJSONObject("main")
-                                        .getDouble("temp") - 273.150) * 1.8 + 32
-                                    val feelsLike = (weatherJSON.getJSONObject("main")
-                                        .getDouble("feels_like") - 273.150) * 1.8 + 32
-                                    var tempMin = (weatherJSON.getJSONObject("main")
-                                        .getDouble("temp_min") - 273.150) * 1.8 + 32
-                                    var tempMax = (weatherJSON.getJSONObject("main")
-                                        .getDouble("temp_max") - 273.150) * 1.8 + 32
-                                    //MPS to MPH
-                                    val windSpeed =
-                                        weatherJSON.getJSONObject("wind")
-                                            .getDouble("speed") * 2.23694
-                                    val tempInt = temp.toInt()
-                                    val tempMaxInt = tempMax.toInt()
-                                    val tempMinInt = tempMin.toInt()
-
-                                    binding.textViewCurrTemp.text = "Current Temp: $tempInt"
-                                    binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
-                                    binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
-                                }
-                            }
-                        } else {
-                            binding.textViewCurrTemp.text = "Invalid location"
-                        }
-                    }
                 }
+                //else {
+//                    var executorService = Executors.newSingleThreadExecutor()
+//                    var mainThreadHandler = HandlerCompat.createAsync(Looper.getMainLooper())
+//                    executorService.execute {
+//
+//                        val weather = getWeather(cityCountry)
+//
+//                        if(weather != "Not Found") {
+//                            mainThreadHandler.post {
+//                                weatherData = weather
+//                                val weatherJSON = JSONObject(weatherData)
+//                                println(weatherJSON)
+//                                val errorCheck = weatherJSON.getInt("cod")
+//                                if (errorCheck.toString() == "404") {
+//                                    Toast.makeText(
+//                                        requireContext(),
+//                                        "Invalid city and country",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//
+//                                } else {
+//                                    // Converting Kelvin to Fahrenheit
+//                                    var temp = (weatherJSON.getJSONObject("main")
+//                                        .getDouble("temp") - 273.150) * 1.8 + 32
+//                                    val feelsLike = (weatherJSON.getJSONObject("main")
+//                                        .getDouble("feels_like") - 273.150) * 1.8 + 32
+//                                    var tempMin = (weatherJSON.getJSONObject("main")
+//                                        .getDouble("temp_min") - 273.150) * 1.8 + 32
+//                                    var tempMax = (weatherJSON.getJSONObject("main")
+//                                        .getDouble("temp_max") - 273.150) * 1.8 + 32
+//                                    //MPS to MPH
+//                                    val windSpeed =
+//                                        weatherJSON.getJSONObject("wind")
+//                                            .getDouble("speed") * 2.23694
+//                                    val tempInt = temp.toInt()
+//                                    val tempMaxInt = tempMax.toInt()
+//                                    val tempMinInt = tempMin.toInt()
+//
+//                                    binding.textViewCurrTemp.text = "Current Temp: $tempInt"
+//                                    binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
+//                                    binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
+//                                }
+//                            }
+//                        } else {
+//                            binding.textViewCurrTemp.text = "Invalid location"
+//                        }
+//                    }
+//                }
             }
         }
     }
 
-    private fun getWeather(cityCountry: String): String {
-        var url: URL? = null
-        try {
-            url =
-                URL("https://api.openweathermap.org/data/2.5/weather?q=${cityCountry.replace(" ", "%20")}&appid=99ea8382701bd7481e5ea568772f739a")
-            println(url)
-            val connection = url!!.openConnection() as HttpURLConnection
-            val weather = try {
-                val inputStream = connection.inputStream
-
-                //The scanner trick: search for the next "beginning" of the input stream
-                //No need to user BufferedReader
-                val scanner = Scanner(inputStream)
-                scanner.useDelimiter("\\A")
-                val hasInput = scanner.hasNext()
-                if (hasInput) {
-                    scanner.next()
-                } else {
-                    null
-                }
-            } catch (e: Exception) {return "Not Found"}
-            finally {
-                connection.disconnect()
-            }
-
-            if (weather != null) {
-                return weather
-            }
-            return "Not Found"
-        } catch (e: MalformedURLException) {
-            Toast.makeText(requireContext(), "Invalid city and country", Toast.LENGTH_SHORT).show()
-        }
-        return "Not Found"
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -254,9 +217,28 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private val liveDataObserver: Observer<String> =
         Observer { weatherData -> // Update the UI if this data variable changes
             if (weatherData != null) {
-                mTvTemp!!.text = "" + (weatherData.temperature.temp - 273.15).roundToInt() + " C"
-                mTvHum!!.text = "" + weatherData.currentCondition.humidity + "%"
-                mTvPress!!.text = "" + weatherData.currentCondition.pressure + " hPa"
+                // convert to json object
+                val weatherJSON = JSONObject(weatherData)
+                // Converting Kelvin to Fahrenheit
+                var temp = (weatherJSON.getJSONObject("main")
+                    .getDouble("temp") - 273.150) * 1.8 + 32
+                val feelsLike = (weatherJSON.getJSONObject("main")
+                    .getDouble("feels_like") - 273.150) * 1.8 + 32
+                var tempMin = (weatherJSON.getJSONObject("main")
+                    .getDouble("temp_min") - 273.150) * 1.8 + 32
+                var tempMax = (weatherJSON.getJSONObject("main")
+                    .getDouble("temp_max") - 273.150) * 1.8 + 32
+                //MPS to MPH
+                val windSpeed =
+                    weatherJSON.getJSONObject("wind")
+                        .getDouble("speed") * 2.23694
+                val tempInt = temp.toInt()
+                val tempMaxInt = tempMax.toInt()
+                val tempMinInt = tempMin.toInt()
+
+                binding.textViewCurrTemp.text = "Current Temp: $tempInt"
+                binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
+                binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
             }
         }
 }

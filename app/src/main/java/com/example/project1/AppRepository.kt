@@ -57,7 +57,47 @@ class AppRepository private constructor(appDao: AppDao) {
         mAppDao.deactivateAll()
         if (mFullName != null) {
             mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mPicturePath!!, mWeight!!, mHeight!!, mAge!!, true))
+            mScope.launch (Dispatchers.IO){
+                getWeather(mCityCountry!!)
+            }
         }
+    }
+
+    @WorkerThread
+    suspend private fun getWeather(cityCountry: String){
+        var url: URL? = null
+        try {
+            url =
+                URL("https://api.openweathermap.org/data/2.5/weather?q=${cityCountry.replace(" ", "%20")}&appid=99ea8382701bd7481e5ea568772f739a")
+            println(url)
+            val connection = url!!.openConnection() as HttpURLConnection
+            val weather = try {
+                val inputStream = connection.inputStream
+
+                //The scanner trick: search for the next "beginning" of the input stream
+                //No need to user BufferedReader
+                val scanner = Scanner(inputStream)
+                scanner.useDelimiter("\\A")
+                val hasInput = scanner.hasNext()
+                if (hasInput) {
+                    scanner.next()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {//return "Not Found"
+                }
+            finally {
+                connection.disconnect()
+            }
+
+            if (weather != null) {
+                //return weather
+                data.postValue(weather as String)
+            }
+            //return "Not Found"
+        } catch (e: MalformedURLException) {
+        }
+        //return "Not Found"
     }
 
     @WorkerThread
