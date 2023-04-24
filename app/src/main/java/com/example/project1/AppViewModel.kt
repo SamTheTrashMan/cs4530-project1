@@ -12,6 +12,8 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
 
     private val weatherData: LiveData<String> = repository.data
 
+    val userData: LiveData<UserTable> = repository.userData
+
     fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
     weight: String, height: String, age: String)
     {
@@ -19,8 +21,8 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
         mAppRepository.setUserData(fullName, cityCountry, activityLevel, sex, picturePath, weight, height, age)
     }
 
-    fun getUser(): List<UserTable> {
-        return mAppRepository.getUserData();
+    fun getUser() {
+        mAppRepository.getUserData();
     }
 
     val data: LiveData<String>

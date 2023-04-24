@@ -27,6 +27,7 @@ import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
 import androidx.lifecycle.Observer
+import kotlin.math.roundToInt
 
 
 class HomeFragment : Fragment(), View.OnClickListener {
@@ -49,60 +50,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val user = appViewModel.getUser()[0]
-        Log.d("User", user.fullName)
-        Log.d("Sex", user.sex)
-        Log.d("activityLevel", user.activityLevel)
-        Log.d("age", user.age)
-        Log.d("Height", user.height)
-        Log.d("weight", user.weight)
-        Log.d("cityCountry", user.cityCountry)
-
-        val sex = user.age
-        val activityLevel = user.activityLevel
-        val age = user.age.toIntOrNull()
-        val height = user.height.toIntOrNull()
-        val weight = user.weight.toIntOrNull()
-        val cityCountry = user.cityCountry
-
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        picturePath = user.picturePath
-        if (picturePath != null) {
-            val thumbnail = BitmapFactory.decodeFile(picturePath)
-            (binding.imageViewPicture).setImageBitmap(thumbnail)
-        }
-
+        appViewModel.userData.observe(viewLifecycleOwner, userDataObserver)
         appViewModel.data.observe(viewLifecycleOwner, liveDataObserver)
 
-        var BMRVal = 0.0
-        var calTarget = 0.0
-        if (age == null || height == null || weight == null || sex == "Select Sex") {
-            BMRVal = 0.0
-        } else {
-            BMRVal = calculateBMR(sex!!, weight, height, age)
-            if (activityLevel == "Sedentary") {
-                calTarget = BMRVal!! * 1.2
-            } else if (activityLevel == "Light Exercise") {
-                calTarget = BMRVal!! * 1.375
-            } else if (activityLevel == "Moderate Exercise") {
-                calTarget = BMRVal!! * 1.55
-            } else if (activityLevel == "Heavy Exercise") {
-                calTarget = BMRVal!! * 1.725
-            } else if (activityLevel == "Athlete") {
-                calTarget = BMRVal!! * 1.9
-            } else {
-                calTarget = 0.0
-            }
-        }
-
-        Log.d("Cal Target", calTarget.toString())
-        binding.textViewBMR.text = "Cal Target: $calTarget"
-        binding.textViewBMR.invalidate()
+        appViewModel.getUser()
 
         binding.mapsButton.setOnClickListener(this)
         binding.buttonWeather.setOnClickListener(this)
@@ -203,5 +157,54 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 binding.textViewHighTemp.text = "High Temp: $tempMaxInt"
                 binding.textViewLowTemp.text = "Low Temp: $tempMinInt"
             }
+        }
+
+    private val userDataObserver: Observer<UserTable> =
+        Observer { user ->
+            val sex = user.age
+            val activityLevel = user.activityLevel
+            val age = user.age.toIntOrNull()
+            val height = user.height.toIntOrNull()
+            val weight = user.weight.toIntOrNull()
+            val cityCountry = user.cityCountry
+
+            Log.d("User", user.fullName)
+            Log.d("Sex", user.sex)
+            Log.d("activityLevel", user.activityLevel)
+            Log.d("age", user.age)
+            Log.d("Height", user.height)
+            Log.d("weight", user.weight)
+            Log.d("cityCountry", user.cityCountry)
+
+            picturePath = user.picturePath
+            if (picturePath != null) {
+                val thumbnail = BitmapFactory.decodeFile(picturePath)
+                (binding.imageViewPicture).setImageBitmap(thumbnail)
+            }
+
+            var BMRVal = 0.0
+            var calTarget = 0.0
+            if (age == null || height == null || weight == null || sex == "Select Sex") {
+                BMRVal = 0.0
+            } else {
+                BMRVal = calculateBMR(sex!!, weight, height, age)
+                if (activityLevel == "Sedentary") {
+                    calTarget = BMRVal!! * 1.2
+                } else if (activityLevel == "Light Exercise") {
+                    calTarget = BMRVal!! * 1.375
+                } else if (activityLevel == "Moderate Exercise") {
+                    calTarget = BMRVal!! * 1.55
+                } else if (activityLevel == "Heavy Exercise") {
+                    calTarget = BMRVal!! * 1.725
+                } else if (activityLevel == "Athlete") {
+                    calTarget = BMRVal!! * 1.9
+                } else {
+                    calTarget = 0.0
+                }
+            }
+
+            Log.d("Cal Target", calTarget.toString())
+            binding.textViewBMR.text = "Cal Target: ${calTarget.roundToInt().toString()}"
+            binding.textViewBMR.invalidate()
         }
 }

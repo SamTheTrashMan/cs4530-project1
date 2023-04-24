@@ -27,12 +27,14 @@ class AppRepository private constructor(appDao: AppDao) {
 
     private var mAppDao: AppDao = appDao
 
-
     val data = MutableLiveData<String>()
 
+    val userData = MutableLiveData<UserTable>()
 
-    fun getUserData(): List<UserTable>{
-        return mAppDao.getUser()
+    fun getUserData() {
+        mScope.launch(Dispatchers.IO) {
+            getUser()
+        }
     }
 
      fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
@@ -51,6 +53,24 @@ class AppRepository private constructor(appDao: AppDao) {
         }
     }
 
+    @WorkerThread
+    suspend fun getUser() {
+        val data = mAppDao.getUser()
+        data.forEach {
+            userData.postValue(
+                UserTable(fullName = it.fullName,
+                    cityCountry = it.cityCountry,
+                    activityLevel = it.activityLevel,
+                    sex = it.sex,
+                    picturePath = it.picturePath,
+                    weight = it.weight,
+                    height = it.height,
+                    age = it.age,
+                    active = it.active
+                )
+            )
+        }
+    }
 
     @WorkerThread
     suspend fun insert() {

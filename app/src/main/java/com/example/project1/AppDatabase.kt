@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
             return mInstance?: synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDatabase::class.java, "app.db"
+                    AppDatabase::class.java, "app_1.db"
                 )
                     .addCallback(RoomDatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
