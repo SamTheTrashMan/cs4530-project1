@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.jvm.Synchronized
 
@@ -20,7 +21,7 @@ class AppRepository private constructor(appDao: AppDao) {
 
     private var mAppDao: AppDao = appDao
 
-
+    val userData : List<UserTable> = mAppDao.getUser()
 
      fun setUserData(fullName: String, cityCountry: String, activityLevel: String, sex : String, picturePath: String,
                     weight: String, height: String, age: String)
@@ -39,12 +40,11 @@ class AppRepository private constructor(appDao: AppDao) {
     }
 
 
-
-
     @WorkerThread
     suspend fun insert() {
+        mAppDao.deactivateAll()
         if (mFullName != null) {
-            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mPicturePath!!, mWeight!!, mHeight!!, mAge!!))
+            mAppDao.insert(UserTable(mFullName!!, mCityCountry!!, mActivityLevel!!, mSex!!, mPicturePath!!, mWeight!!, mHeight!!, mAge!!, true))
         }
     }
 

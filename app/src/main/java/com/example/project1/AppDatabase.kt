@@ -30,6 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     .addCallback(RoomDatabaseCallback(scope))
                     .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
                 mInstance = instance
                 instance

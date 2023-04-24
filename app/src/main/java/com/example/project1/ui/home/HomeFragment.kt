@@ -6,15 +6,19 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import com.example.project1.R
+import com.example.project1.*
 import com.example.project1.databinding.FragmentHomeBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -34,6 +38,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private var picturePath: String? = null
     private var weatherData: String? = null
 
+    private val appViewModel: AppViewModel by viewModels {
+        AppViewModelFactory((requireActivity().application as AppApplication).repository)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,12 +49,14 @@ class HomeFragment : Fragment(), View.OnClickListener {
     ): View {
         val intent = requireActivity().intent
 
-        val sex = intent.getStringExtra("sex")
-        val activityLevel = intent.getStringExtra("activityLevel")
-        val age = intent.getStringExtra("age")!!.toIntOrNull()
-        val height = intent.getStringExtra("height")!!.toIntOrNull()
-        val weight = intent.getStringExtra("weight")!!.toIntOrNull()
-        val cityCountry = intent.getStringExtra("cityCountry")
+        val user = appViewModel.getUser()[0]
+
+        val sex = user.age
+        val activityLevel = user.activityLevel
+        val age = user.age.toIntOrNull()
+        val height = user.height.toIntOrNull()
+        val weight = user.weight.toIntOrNull()
+        val cityCountry = user.cityCountry
 
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -54,7 +64,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        picturePath = intent.getStringExtra("picturePath")
+        picturePath = user.picturePath
         if (picturePath != null) {
             val thumbnail = BitmapFactory.decodeFile(picturePath)
             (binding.imageViewPicture).setImageBitmap(thumbnail)

@@ -1,6 +1,7 @@
 package com.example.project1
 
 import androidx.lifecycle.*
+import kotlinx.coroutines.flow.Flow
 
 class AppViewModel(repository: AppRepository) : ViewModel() {
     //The singleton repository. If our app maps to one process, the recommended
@@ -15,6 +16,10 @@ class AppViewModel(repository: AppRepository) : ViewModel() {
     {
         // Simply pass the location to the repository
         mAppRepository.setUserData(fullName, cityCountry, activityLevel, sex, picturePath, weight, height, age)
+    }
+
+    fun getUser(): List<UserTable> {
+        return mAppRepository.userData;
     }
 }
 

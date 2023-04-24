@@ -22,4 +22,6 @@ data class UserTable(
     var height: String,
     @field:ColumnInfo(name = "age")
     var age: String,
+    @field:ColumnInfo(name = "active")
+    var active : Boolean,
 )
