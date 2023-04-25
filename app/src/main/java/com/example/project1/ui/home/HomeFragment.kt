@@ -53,6 +53,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        binding.textViewHighTemp.visibility = INVISIBLE
+        binding.textViewLowTemp.visibility = INVISIBLE
+        binding.textViewCurrTemp.visibility = INVISIBLE
+
+
         appViewModel.userData.observe(viewLifecycleOwner, userDataObserver)
         appViewModel.data.observe(viewLifecycleOwner, liveDataObserver)
 
@@ -100,13 +105,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.buttonWeather -> {
-                if (cityCountry.isNullOrBlank()) {
-                    Toast.makeText(requireContext(), "No Location to Search", Toast.LENGTH_SHORT)
-                        .show()
-                }
-                else {
-
-                }
+                binding.textViewHighTemp.visibility = View.VISIBLE
+                binding.textViewLowTemp.visibility = View.VISIBLE
+                binding.textViewCurrTemp.visibility = View.VISIBLE
             }
         }
     }
@@ -133,7 +134,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     //create an observer that watches the LiveData<WeatherData> object
     private val liveDataObserver: Observer<String> =
         Observer { weatherData -> // Update the UI if this data variable changes
-            if (weatherData != null) {
+            if (weatherData != null && weatherData != "Not Found") {
                 // convert to json object
                 val weatherJSON = JSONObject(weatherData)
                 // Converting Kelvin to Fahrenheit
@@ -163,18 +164,17 @@ class HomeFragment : Fragment(), View.OnClickListener {
         Observer { user ->
             val sex = user.age
             val activityLevel = user.activityLevel
-            val age = user.age.toIntOrNull()
-            val height = user.height.toIntOrNull()
-            val weight = user.weight.toIntOrNull()
-            val cityCountry = user.cityCountry
+            val age = user.age!!.toIntOrNull()
+            val height = user.height!!.toIntOrNull()
+            val weight = user.weight!!.toIntOrNull()
 
-            Log.d("User", user.fullName)
-            Log.d("Sex", user.sex)
-            Log.d("activityLevel", user.activityLevel)
-            Log.d("age", user.age)
-            Log.d("Height", user.height)
-            Log.d("weight", user.weight)
-            Log.d("cityCountry", user.cityCountry)
+//            Log.d("User", user.fullName)
+//            Log.d("Sex", user.sex!!)
+//            Log.d("activityLevel", user.activityLevel!!)
+//            Log.d("age", user.age!!)
+//            Log.d("Height", user.height!!)
+//            Log.d("weight", user.weight!!)
+//            Log.d("cityCountry", user.cityCountry!!)
 
             picturePath = user.picturePath
             if (picturePath != null) {
@@ -182,22 +182,22 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 (binding.imageViewPicture).setImageBitmap(thumbnail)
             }
 
-            var BMRVal = 0.0
+            var bmrVal: Double
             var calTarget = 0.0
             if (age == null || height == null || weight == null || sex == "Select Sex") {
-                BMRVal = 0.0
+                bmrVal = 0.0
             } else {
-                BMRVal = calculateBMR(sex!!, weight, height, age)
+                bmrVal = calculateBMR(sex!!, weight, height, age)
                 if (activityLevel == "Sedentary") {
-                    calTarget = BMRVal!! * 1.2
+                    calTarget = bmrVal!! * 1.2
                 } else if (activityLevel == "Light Exercise") {
-                    calTarget = BMRVal!! * 1.375
+                    calTarget = bmrVal!! * 1.375
                 } else if (activityLevel == "Moderate Exercise") {
-                    calTarget = BMRVal!! * 1.55
+                    calTarget = bmrVal!! * 1.55
                 } else if (activityLevel == "Heavy Exercise") {
-                    calTarget = BMRVal!! * 1.725
+                    calTarget = bmrVal!! * 1.725
                 } else if (activityLevel == "Athlete") {
-                    calTarget = BMRVal!! * 1.9
+                    calTarget = bmrVal!! * 1.9
                 } else {
                     calTarget = 0.0
                 }
@@ -205,6 +205,5 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
             Log.d("Cal Target", calTarget.toString())
             binding.textViewBMR.text = "Cal Target: ${calTarget.roundToInt().toString()}"
-            binding.textViewBMR.invalidate()
         }
 }

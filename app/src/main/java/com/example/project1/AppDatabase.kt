@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [UserTable::class], version = 1, exportSchema = false)
+@Database(entities = [UserTable::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun appDao(): AppDao
 
@@ -42,16 +42,7 @@ abstract class AppDatabase : RoomDatabase() {
         ): RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
-                mInstance?.let { database ->
-                    scope.launch(Dispatchers.IO){
-                        //populateDbTask(database.appDao())
-                    }
-                }
             }
         }
-
-//        suspend fun populateDbTask (weatherDao: AppDao) {
-//            weatherDao.insert(UserTable("Dummy_loc","Dummy_data"))
-//        }
     }
 }

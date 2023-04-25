@@ -1,13 +1,10 @@
 package com.example.project1
 
-import android.widget.Toast
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.annotation.WorkerThread
-import androidx.core.content.ContentProviderCompat.requireContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -54,7 +51,7 @@ class AppRepository private constructor(appDao: AppDao) {
     }
 
     @WorkerThread
-    suspend fun getUser() {
+    fun getUser() {
         val data = mAppDao.getUser()
         data.forEach {
             userData.postValue(
@@ -84,12 +81,17 @@ class AppRepository private constructor(appDao: AppDao) {
     }
 
     @WorkerThread
-    suspend private fun getWeather(cityCountry: String){
-        var url: URL? = null
+    private fun getWeather(cityCountry: String) {
+        if (cityCountry == "") {
+            return
+        }
+
+        Log.d("city", cityCountry)
+
+        var url: URL?
         try {
             url =
                 URL("https://api.openweathermap.org/data/2.5/weather?q=${cityCountry.replace(" ", "%20")}&appid=99ea8382701bd7481e5ea568772f739a")
-            println(url)
             val connection = url!!.openConnection() as HttpURLConnection
             val weather = try {
                 val inputStream = connection.inputStream
@@ -104,25 +106,21 @@ class AppRepository private constructor(appDao: AppDao) {
                 } else {
                     null
                 }
-            } catch (e: Exception) {//return "Not Found"
-                }
+            } catch (e: Exception) {
+                data.postValue("Not Found")
+            }
             finally {
                 connection.disconnect()
             }
 
-            if (weather != null) {
-                //return weather
-                data.postValue(weather as String)
+            if (weather != null && weather is String) {
+                data.postValue(weather!!)
+            } else {
+                data.postValue("Not Found")
             }
-            //return "Not Found"
         } catch (e: MalformedURLException) {
+            data.postValue("Not Found")
         }
-        //return "Not Found"
-    }
-
-    @WorkerThread
-    suspend fun fetchAndParseWeatherData(location: String) {
-        // TODO: move weather logic from HomeFragment to here
     }
 
     // Make the repository singleton. Could in theory

@@ -9,19 +9,19 @@ data class UserTable(
     @field:PrimaryKey
     var fullName: String,
     @field:ColumnInfo(name = "cityCountry")
-    var cityCountry: String,
+    var cityCountry: String?,
     @field:ColumnInfo(name = "activityLevel")
-    var activityLevel: String,
+    var activityLevel: String?,
     @field:ColumnInfo(name = "sex")
-    var sex: String,
+    var sex: String?,
     @field:ColumnInfo(name = "picturePath")
-    var picturePath: String,
+    var picturePath: String?,
     @field:ColumnInfo(name = "weight")
-    var weight: String,
+    var weight: String?,
     @field:ColumnInfo(name = "height")
-    var height: String,
+    var height: String?,
     @field:ColumnInfo(name = "age")
-    var age: String,
+    var age: String?,
     @field:ColumnInfo(name = "active")
-    var active : Boolean,
+    var active : Boolean?,
 )
