@@ -162,7 +162,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private val userDataObserver: Observer<UserTable> =
         Observer { user ->
-            val sex = user.age
+            val sex = user.sex
             val activityLevel = user.activityLevel
             val age = user.age!!.toIntOrNull()
             val height = user.height!!.toIntOrNull()

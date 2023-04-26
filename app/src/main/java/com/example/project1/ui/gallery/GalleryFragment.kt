@@ -4,20 +4,24 @@ import android.R
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.project1.AppApplication
+import com.example.project1.AppViewModel
+import com.example.project1.AppViewModelFactory
+import com.example.project1.UserTable
 import com.example.project1.databinding.FragmentGalleryBinding
 import com.example.project1.databinding.FragmentHomeBinding
 import com.example.project1.ui.home.HomeViewModel
@@ -26,8 +30,28 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
+import androidx.lifecycle.Observer
+
+
+
 
 class GalleryFragment : Fragment(), View.OnClickListener {
+    private var fullName: String? = null
+    private var cityCountry: String? = ""
+    private var weight: Int ? = 0
+    private var height: Int?= 0
+    private var age: Int?= 0
+    private var activityLevel: String? = ""
+    private var sex: String? = ""
+    private var fullNameEt: EditText? = null
+    private var ageEt: Spinner? = null
+    private var cityCountryEt: EditText? = null
+    private var weightEt: Spinner? = null
+    private var heightEt: Spinner? = null
+    private var activitySpinner: Spinner? = null
+    private var sexSpinner: Spinner? = null
+
 
     private var _binding: FragmentGalleryBinding? = null
     private var picturePath: String? = ""
@@ -39,20 +63,23 @@ class GalleryFragment : Fragment(), View.OnClickListener {
     // onDestroyView.
     private val binding get() = _binding!!
 
+
+    private val appViewModel: AppViewModel by viewModels {
+        AppViewModelFactory((requireActivity().application as AppApplication).repository)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val intent = requireActivity().intent
-
-        val sex = intent.getStringExtra("sex")
-        val activityLevel = intent.getStringExtra("activityLevel")
-        val age = intent.getStringExtra("age")!!.toIntOrNull()
-        val height = intent.getStringExtra("height")!!.toIntOrNull()
-        val weight = intent.getStringExtra("weight")!!.toIntOrNull()
-        val name = intent.getStringExtra("fullName")
-        val cityCountry = intent.getStringExtra("cityCountry")
+//        val activityLevel = intent.getStringExtra("activityLevel")
+//        val age = intent.getStringExtra("age")!!.toIntOrNull()
+//        val height = intent.getStringExtra("height")!!.toIntOrNull()
+//        val weight = intent.getStringExtra("weight")!!.toIntOrNull()
+//        val name = intent.getStringExtra("fullName")
+//        val cityCountry = intent.getStringExtra("cityCountry")
 
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -60,77 +87,108 @@ class GalleryFragment : Fragment(), View.OnClickListener {
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        appViewModel.userData.observe(viewLifecycleOwner, userDataObserver)
+        appViewModel.getUser()
+
         buttonSignUp = binding.buttonSignUp
         buttonSignUp!!.setOnClickListener(this)
 
         cameraButton = binding.buttonPicture
         cameraButton!!.setOnClickListener(this)
-        val entries = ArrayList<String>()
-        entries.add("Select Age")
-        for (i in 1..65) {
-            entries.add(i.toString())
-        }
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-            requireContext(),
-            R.layout.simple_spinner_item, entries
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerAge!!.adapter = adapter
 
-        // Height
-        val heightEntries = ArrayList<String>()
-        heightEntries.add("Select Height")
-        for (i in 1..113) {
-            heightEntries.add(i.toString())
-        }
-        val heightAdapter = ArrayAdapter<String>(
-            requireContext(),
-            R.layout.simple_spinner_item,
-            heightEntries
-        )
-        heightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerHeight!!.adapter = heightAdapter
-
-        // Weight
-        val weightEntries = ArrayList<String>()
-        weightEntries.add("Select Weight")
-        for (i in 1..500) {
-            weightEntries.add(i.toString())
-        }
-        val weightAdapter = ArrayAdapter<String>(
-            requireContext(),
-            R.layout.simple_spinner_item,
-            weightEntries
-        )
-        weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        if(weightAdapter != null) {
-            binding.spinnerWeight!!.adapter = weightAdapter
-        }
-        if(cityCountry != null) {
-            binding.editTextCityCountry.setText(cityCountry)
-        }
-            binding.editTextFullName.setText(name)
-
-        if(age != null) {
-            binding.spinnerAge.setSelection(age!!)
-        }
-        if(height != null) {
-            binding.spinnerHeight.setSelection(height!!)
-        }
-        if(weight != null) {
-            binding.spinnerWeight.setSelection(weight!!)
-        }
-        if(activityLevel != null) {
-            binding.spinnerActivity.setSelection(calculateActivityIndex(activityLevel!!))
-        }
-        if(sex != null) {
-            binding.spinnerSex.setSelection(calculateSexIndex(sex!!))
-        }
-
+        fullNameEt = binding.editTextFullName
+        ageEt = binding.spinnerAge
+        cityCountryEt = binding.editTextCityCountry
+        weightEt = binding.spinnerWeight
+        heightEt = binding.spinnerHeight
+        activitySpinner = binding.spinnerActivity
+        sexSpinner = binding.spinnerSex
 
         return root
     }
+
+    private val userDataObserver: Observer<UserTable> =
+        Observer { user ->
+             fullName = user.fullName
+             sex = user.sex
+             activityLevel = user.activityLevel
+             cityCountry = user.cityCountry
+             age = user.age!!.toIntOrNull()
+             height = user.height!!.toIntOrNull()
+             weight = user.weight!!.toIntOrNull()
+            picturePath = user.picturePath
+
+//            Log.d("User", user.fullName)
+//            Log.d("Sex", user.sex!!)
+//            Log.d("activityLevel", user.activityLevel!!)
+//            Log.d("age", user.age!!)
+//            Log.d("Height", user.height!!)
+//            Log.d("weight", user.weight!!)
+//            Log.d("cityCountry", user.cityCountry!!)
+            val entries = ArrayList<String>()
+            entries.add("Select Age")
+            for (i in 1..65) {
+                entries.add(i.toString())
+            }
+            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+                requireContext(),
+                R.layout.simple_spinner_item, entries
+            )
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerAge!!.adapter = adapter
+
+            // Height
+            val heightEntries = ArrayList<String>()
+            heightEntries.add("Select Height")
+            for (i in 1..113) {
+                heightEntries.add(i.toString())
+            }
+            val heightAdapter = ArrayAdapter<String>(
+                requireContext(),
+                R.layout.simple_spinner_item,
+                heightEntries
+            )
+            heightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerHeight!!.adapter = heightAdapter
+
+            // Weight
+            val weightEntries = ArrayList<String>()
+            weightEntries.add("Select Weight")
+            for (i in 1..500) {
+                weightEntries.add(i.toString())
+            }
+            val weightAdapter = ArrayAdapter<String>(
+                requireContext(),
+                R.layout.simple_spinner_item,
+                weightEntries
+            )
+            weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+            if(weightAdapter != null) {
+                binding.spinnerWeight!!.adapter = weightAdapter
+            }
+            if(cityCountry != null) {
+                binding.editTextCityCountry.setText(cityCountry)
+            }
+            binding.editTextFullName.setText(fullName)
+
+            if(age != null) {
+                binding.spinnerAge.setSelection(age!!)
+            }
+            if(height != null) {
+                binding.spinnerHeight.setSelection(height!!)
+            }
+            if(weight != null) {
+                binding.spinnerWeight.setSelection(weight!!)
+            }
+            if(activityLevel != null) {
+                binding.spinnerActivity.setSelection(calculateActivityIndex(activityLevel!!))
+            }
+            if(sex != null) {
+                binding.spinnerSex.setSelection(calculateSexIndex(sex!!))
+            }
+
+        }
 
     private fun calculateSexIndex(sex: String): Int {
         if(sex == "Select Sex"){
@@ -153,24 +211,18 @@ class GalleryFragment : Fragment(), View.OnClickListener {
                 }
             }
             com.example.project1.R.id.buttonSignUp -> {
-                val fullName = binding.editTextFullName!!.text.toString()
-                val cityCountry = binding.editTextCityCountry!!.text.toString()
-                val activityLevel = binding.spinnerActivity!!.selectedItem.toString()
-                val sex = binding.spinnerSex!!.selectedItem.toString()
-                val weight = binding.spinnerWeight!!.selectedItem.toString()
-                val height = binding.spinnerHeight!!.selectedItem.toString()
-                val age = binding.spinnerAge!!.selectedItem.toString()
-                if (fullName.isNullOrBlank()) {
-                    Toast.makeText(requireContext(),"Please fill fill in the name field",Toast.LENGTH_SHORT).show()
-                } else {
-                    requireActivity().intent.putExtra("picturePath", picturePath)
-                    requireActivity().intent.putExtra("fullName", fullName)
-                    requireActivity().intent.putExtra("cityCountry", cityCountry)
-                    requireActivity().intent.putExtra("activityLevel", activityLevel)
-                    requireActivity().intent.putExtra("sex", sex)
-                    requireActivity().intent.putExtra("weight", weight)
-                    requireActivity().intent.putExtra("height", height)
-                    requireActivity().intent.putExtra("age", age)
+                    val fullName = fullNameEt!!.text.toString()
+                    val cityCountry = cityCountryEt!!.text.toString()
+                    val activityLevel = activitySpinner!!.selectedItem.toString()
+                    val sex = sexSpinner!!.selectedItem.toString()
+                    val weight = weightEt!!.selectedItem.toString()
+                    val height = heightEt!!.selectedItem.toString()
+                    val age = ageEt!!.selectedItem.toString()
+                    if (fullName.isNullOrBlank())  {
+                        Toast.makeText(requireContext(), "Please fill fill in the name field", Toast.LENGTH_SHORT).show()
+                    } else {
+                        appViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
+                            picturePath!!, weight!!, height!!, age!!)
                     Toast.makeText(requireContext(),"Updated successfully!",Toast.LENGTH_SHORT).show()
 
                 }

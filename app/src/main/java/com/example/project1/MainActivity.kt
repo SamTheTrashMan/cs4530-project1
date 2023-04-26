@@ -134,18 +134,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
 
                     //Do we want to do it so we have a bunch of if's inside the else?
-                    val bundle = Bundle()
-                    bundle.putString("fullName", fullName)
-                    bundle.putString("cityCountry", cityCountry)
-                    bundle.putString("activityLevel", activityLevel)
-                    bundle.putString("sex", sex)
-                    bundle.putString("picturePath", picturePath)
-                    bundle.putString("weight", weight)
-                    bundle.putString("height", height)
-                    bundle.putString("age", age)
-
-                    menuActivityIntent!!.putExtras(bundle)
-                    drawerActivityIntent!!.putExtras(bundle)
+//                    val bundle = Bundle()
+//                    bundle.putString("fullName", fullName)
+//                    bundle.putString("cityCountry", cityCountry)
+//                    bundle.putString("activityLevel", activityLevel)
+//                    bundle.putString("sex", sex)
+//                    bundle.putString("picturePath", picturePath)
+//                    bundle.putString("weight", weight)
+//                    bundle.putString("height", height)
+//                    bundle.putString("age", age)
+//
+//                    menuActivityIntent!!.putExtras(bundle)
+//                    drawerActivityIntent!!.putExtras(bundle)
                     startActivity(drawerActivityIntent)
                 }
             }
