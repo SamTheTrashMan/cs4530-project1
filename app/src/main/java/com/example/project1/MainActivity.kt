@@ -131,21 +131,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     mAppViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
                         picturePath!!, weight!!, height!!, age!!)
 
+                    fullNameEt!!.setText("")
+                    ageEt!!.setSelection(0)
+                    cityCountryEt!!.setText("")
+                    weightEt!!.setSelection(0)
+                    heightEt!!.setSelection(0)
+                    activitySpinner!!.setSelection(0)
+                    sexSpinner!!.setSelection(0)
 
-
-                    //Do we want to do it so we have a bunch of if's inside the else?
-//                    val bundle = Bundle()
-//                    bundle.putString("fullName", fullName)
-//                    bundle.putString("cityCountry", cityCountry)
-//                    bundle.putString("activityLevel", activityLevel)
-//                    bundle.putString("sex", sex)
-//                    bundle.putString("picturePath", picturePath)
-//                    bundle.putString("weight", weight)
-//                    bundle.putString("height", height)
-//                    bundle.putString("age", age)
-//
-//                    menuActivityIntent!!.putExtras(bundle)
-//                    drawerActivityIntent!!.putExtras(bundle)
                     startActivity(drawerActivityIntent)
                 }
             }
