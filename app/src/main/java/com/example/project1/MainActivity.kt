@@ -106,7 +106,23 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         signupButton!!.setOnClickListener(this)
         cameraButton!!.setOnClickListener(this)
+
+
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        fullNameEt!!.setText("")
+        ageEt!!.setSelection(0)
+        cityCountryEt!!.setText("")
+        weightEt!!.setSelection(0)
+        heightEt!!.setSelection(0)
+        activitySpinner!!.setSelection(0)
+        sexSpinner!!.setSelection(0)
+
+    }
+
     override fun onClick(view: View) {
         when (view.id) {
             R.id.buttonPicture -> {
@@ -131,15 +147,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     mAppViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
                         picturePath!!, weight!!, height!!, age!!)
 
-                    fullNameEt!!.setText("")
-                    ageEt!!.setSelection(0)
-                    cityCountryEt!!.setText("")
-                    weightEt!!.setSelection(0)
-                    heightEt!!.setSelection(0)
-                    activitySpinner!!.setSelection(0)
-                    sexSpinner!!.setSelection(0)
-
                     startActivity(drawerActivityIntent)
+
+
                 }
             }
         }
