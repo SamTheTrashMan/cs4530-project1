@@ -82,7 +82,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View) {
-        val cityCountry = requireActivity().intent.getStringExtra("cityCountry")
+        val cityCountry = appViewModel.userData.value!!.cityCountry
         when (view.id) {
             R.id.mapsButton -> {
                 if (cityCountry.isNullOrBlank()) {
