@@ -250,7 +250,29 @@ class GalleryFragment : Fragment(), View.OnClickListener {
                         appViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
                             picturePath!!, weight!!, height!!, age!!)
                     Toast.makeText(requireContext(),"Updated successfully!",Toast.LENGTH_SHORT).show()
+                        var bmrVal: Double
+                        var calTarget = 0.0
+                        if (age == null || height == null || weight == null || sex == "Select Sex") {
+                            bmrVal = 0.0
+                        } else {
+                            bmrVal = calculateBMR(sex!!, weight.toInt(), height.toInt(), age.toInt())
+                            if (activityLevel == "Sedentary") {
+                                calTarget = bmrVal!! * 1.2
+                            } else if (activityLevel == "Light Exercise") {
+                                calTarget = bmrVal!! * 1.375
+                            } else if (activityLevel == "Moderate Exercise") {
+                                calTarget = bmrVal!! * 1.55
+                            } else if (activityLevel == "Heavy Exercise") {
+                                calTarget = bmrVal!! * 1.725
+                            } else if (activityLevel == "Athlete") {
+                                calTarget = bmrVal!! * 1.9
+                            } else {
+                                calTarget = 0.0
+                            }
+                        }
 
+                        Log.d("Cal Target", calTarget.toString())
+                        binding.textViewBMR2.text = "Cal Target: ${calTarget.roundToInt().toString()}"
                 }
             }
         }
