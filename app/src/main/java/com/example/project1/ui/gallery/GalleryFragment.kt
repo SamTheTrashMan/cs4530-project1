@@ -53,6 +53,8 @@ class GalleryFragment : Fragment(), View.OnClickListener {
     private var sexSpinner: Spinner? = null
 
 
+
+
     private var _binding: FragmentGalleryBinding? = null
     private var picturePath: String? = ""
     private var picture: Bitmap? = null
@@ -116,15 +118,39 @@ class GalleryFragment : Fragment(), View.OnClickListener {
              age = user.age!!.toIntOrNull()
              height = user.height!!.toIntOrNull()
              weight = user.weight!!.toIntOrNull()
-            picturePath = user.picturePath
+             picturePath = user.picturePath
 
-//            Log.d("User", user.fullName)
-//            Log.d("Sex", user.sex!!)
-//            Log.d("activityLevel", user.activityLevel!!)
-//            Log.d("age", user.age!!)
-//            Log.d("Height", user.height!!)
-//            Log.d("weight", user.weight!!)
-//            Log.d("cityCountry", user.cityCountry!!)
+
+            //set profile picture image
+            if (picturePath != null) {
+                val thumbnail = BitmapFactory.decodeFile(picturePath)
+                (binding.imageViewPicture2).setImageBitmap(thumbnail)
+            }
+            // update bmr text box
+            var bmrVal: Double
+            var calTarget = 0.0
+            if (age == null || height == null || weight == null || sex == "Select Sex") {
+                bmrVal = 0.0
+            } else {
+                bmrVal = calculateBMR(sex!!, weight!!, height!!, age!!)
+                if (activityLevel == "Sedentary") {
+                    calTarget = bmrVal!! * 1.2
+                } else if (activityLevel == "Light Exercise") {
+                    calTarget = bmrVal!! * 1.375
+                } else if (activityLevel == "Moderate Exercise") {
+                    calTarget = bmrVal!! * 1.55
+                } else if (activityLevel == "Heavy Exercise") {
+                    calTarget = bmrVal!! * 1.725
+                } else if (activityLevel == "Athlete") {
+                    calTarget = bmrVal!! * 1.9
+                } else {
+                    calTarget = 0.0
+                }
+            }
+
+            Log.d("Cal Target", calTarget.toString())
+            binding.textViewBMR2.text = "Cal Target: ${calTarget.roundToInt().toString()}"
+
             val entries = ArrayList<String>()
             entries.add("Select Age")
             for (i in 1..65) {
@@ -288,5 +314,12 @@ class GalleryFragment : Fragment(), View.OnClickListener {
             return 4
         }
        return 5
+    }
+
+    private fun calculateBMR(sex: String, weight: Int, height: Int, age: Int): Double {
+        if (sex == "Male") {
+            return 66.47 + (6.24 * weight!!) + (12.7 * height!!) - (6.755 * age!!)
+        }
+        return 655.1 + (4.35 * weight!!) + (4.7 * height!!) - (4.7 * age!!)
     }
 }
