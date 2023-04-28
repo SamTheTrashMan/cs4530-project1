@@ -103,6 +103,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         weightEt!!.adapter = weightAdapter
 
+        if (savedInstanceState != null) {
+            fullNameEt!!.setText(savedInstanceState.getString("fullName"))
+            cityCountryEt!!.setText(savedInstanceState.getString("cityCountry"))
+            ageEt!!.setSelection(savedInstanceState.getInt("age"))
+            weightEt!!.setSelection(savedInstanceState.getInt("weight"))
+            heightEt!!.setSelection(savedInstanceState.getInt("height"))
+            sexSpinner!!.setSelection(savedInstanceState.getInt("sex"))
+            activitySpinner!!.setSelection(savedInstanceState.getInt("activity"))
+
+        }
+
         menuActivityIntent = Intent(this, MenuActivity::class.java)
         drawerActivityIntent = Intent(this, DrawerActivity::class.java)
 
@@ -126,6 +137,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         {
             inCamera = false
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("fullName", fullNameEt!!.text.toString())
+        outState.putInt("age", ageEt!!.selectedItemPosition)
+        outState.putString("cityCountry", cityCountryEt!!.text.toString())
+        outState.putInt("weight", weightEt!!.selectedItemPosition)
+        outState.putInt("height", heightEt!!.selectedItemPosition)
+        outState.putInt("activity", activitySpinner!!.selectedItemPosition)
+        outState.putInt("sex", sexSpinner!!.selectedItemPosition)
     }
 
     override fun onClick(view: View) {
