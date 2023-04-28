@@ -67,17 +67,6 @@ class GalleryFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val intent = requireActivity().intent
-//        val activityLevel = intent.getStringExtra("activityLevel")
-//        val age = intent.getStringExtra("age")!!.toIntOrNull()
-//        val height = intent.getStringExtra("height")!!.toIntOrNull()
-//        val weight = intent.getStringExtra("weight")!!.toIntOrNull()
-//        val name = intent.getStringExtra("fullName")
-//        val cityCountry = intent.getStringExtra("cityCountry")
-
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -98,6 +87,56 @@ class GalleryFragment : Fragment(), View.OnClickListener {
         activitySpinner = binding.spinnerActivity
         sexSpinner = binding.spinnerSex
 
+        val entries = ArrayList<String>()
+        entries.add("Select Age")
+        for (i in 1..65) {
+            entries.add(i.toString())
+        }
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireContext(),
+            R.layout.simple_spinner_item, entries
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerAge!!.adapter = adapter
+
+        // Height
+        val heightEntries = ArrayList<String>()
+        heightEntries.add("Select Height")
+        for (i in 1..113) {
+            heightEntries.add(i.toString())
+        }
+        val heightAdapter = ArrayAdapter<String>(
+            requireContext(),
+            R.layout.simple_spinner_item,
+            heightEntries
+        )
+        heightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerHeight!!.adapter = heightAdapter
+
+        // Weight
+        val weightEntries = ArrayList<String>()
+        weightEntries.add("Select Weight")
+        for (i in 1..500) {
+            weightEntries.add(i.toString())
+        }
+        val weightAdapter = ArrayAdapter<String>(
+            requireContext(),
+            R.layout.simple_spinner_item,
+            weightEntries
+        )
+        weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerWeight!!.adapter = weightAdapter
+
+        if (savedInstanceState != null) {
+            binding.editTextFullName.setText(savedInstanceState.getString("fullName"))
+            binding.spinnerAge.setSelection(savedInstanceState.getInt("age"))
+            binding.editTextCityCountry.setText(savedInstanceState.getString("cityCountry"))
+            binding.spinnerHeight.setSelection(savedInstanceState.getInt("height"))
+            binding.spinnerWeight.setSelection(savedInstanceState.getInt("weight"))
+            binding.spinnerActivity.setSelection(savedInstanceState.getInt("activityLevel"))
+            binding.spinnerSex.setSelection(savedInstanceState.getInt("sex"))
+        }
+
         return root
     }
 
@@ -111,7 +150,6 @@ class GalleryFragment : Fragment(), View.OnClickListener {
              height = user.height!!.toIntOrNull()
              weight = user.weight!!.toIntOrNull()
              picturePath = user.picturePath
-
 
             //set profile picture image
             if (!picturePath.isNullOrBlank()) {
@@ -143,69 +181,32 @@ class GalleryFragment : Fragment(), View.OnClickListener {
             Log.d("Cal Target", calTarget.toString())
             binding.textViewBMR2.text = "Cal Target: ${calTarget.roundToInt().toString()}"
 
-            val entries = ArrayList<String>()
-            entries.add("Select Age")
-            for (i in 1..65) {
-                entries.add(i.toString())
-            }
-            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                requireContext(),
-                R.layout.simple_spinner_item, entries
-            )
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spinnerAge!!.adapter = adapter
-
-            // Height
-            val heightEntries = ArrayList<String>()
-            heightEntries.add("Select Height")
-            for (i in 1..113) {
-                heightEntries.add(i.toString())
-            }
-            val heightAdapter = ArrayAdapter<String>(
-                requireContext(),
-                R.layout.simple_spinner_item,
-                heightEntries
-            )
-            heightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spinnerHeight!!.adapter = heightAdapter
-
-            // Weight
-            val weightEntries = ArrayList<String>()
-            weightEntries.add("Select Weight")
-            for (i in 1..500) {
-                weightEntries.add(i.toString())
-            }
-            val weightAdapter = ArrayAdapter<String>(
-                requireContext(),
-                R.layout.simple_spinner_item,
-                weightEntries
-            )
-            weightAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-            if(weightAdapter != null) {
-                binding.spinnerWeight!!.adapter = weightAdapter
-            }
-            if(cityCountry != null) {
+            if(cityCountry != null && binding.editTextCityCountry.text.isNullOrBlank()) {
                 binding.editTextCityCountry.setText(cityCountry)
             }
-            binding.editTextFullName.setText(fullName)
 
-            if(age != null) {
+            if (binding.editTextFullName.text.isNullOrBlank()) {
+                binding.editTextFullName.setText(fullName)
+            }
+
+
+            if(age != null && binding.spinnerAge.selectedItemPosition == 0) {
                 binding.spinnerAge.setSelection(age!!)
             }
-            if(height != null) {
+
+            if(height != null && binding.spinnerHeight.selectedItemPosition == 0) {
                 binding.spinnerHeight.setSelection(height!!)
             }
-            if(weight != null) {
+
+            if(weight != null && binding.spinnerWeight.selectedItemPosition == 0) {
                 binding.spinnerWeight.setSelection(weight!!)
             }
-            if(activityLevel != null) {
+            if(activityLevel != null && binding.spinnerActivity.selectedItemPosition == 0) {
                 binding.spinnerActivity.setSelection(calculateActivityIndex(activityLevel!!))
             }
-            if(sex != null) {
+            if(sex != null && binding.spinnerSex.selectedItemPosition == 0) {
                 binding.spinnerSex.setSelection(calculateSexIndex(sex!!))
             }
-
         }
 
     private fun calculateSexIndex(sex: String): Int {
@@ -216,6 +217,18 @@ class GalleryFragment : Fragment(), View.OnClickListener {
             return 1
         }
         return 2
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString("fullName", view?.findViewById<TextView>(com.example.project1.R.id.editTextFullName)!!.text.toString())
+        outState.putInt("age", view?.findViewById<Spinner>(com.example.project1.R.id.spinnerAge)!!.selectedItemPosition)
+        outState.putString("cityCountry", view?.findViewById<TextView>(com.example.project1.R.id.editTextCityCountry)!!.text.toString())
+        outState.putInt("height", view?.findViewById<Spinner>(com.example.project1.R.id.spinnerHeight)!!.selectedItemPosition)
+        outState.putInt("weight", view?.findViewById<Spinner>(com.example.project1.R.id.spinnerWeight)!!.selectedItemPosition)
+        outState.putInt("activityLevel", view?.findViewById<Spinner>(com.example.project1.R.id.spinnerActivity)!!.selectedItemPosition)
+        outState.putInt("sex", view?.findViewById<Spinner>(com.example.project1.R.id.spinnerSex)!!.selectedItemPosition)
     }
 
     override fun onClick(view: View) {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -111,7 +112,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             heightEt!!.setSelection(savedInstanceState.getInt("height"))
             sexSpinner!!.setSelection(savedInstanceState.getInt("sex"))
             activitySpinner!!.setSelection(savedInstanceState.getInt("activity"))
-
         }
 
         menuActivityIntent = Intent(this, MenuActivity::class.java)
@@ -121,26 +121,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         cameraButton!!.setOnClickListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        if(!inCamera)
-        {
-            fullNameEt!!.setText("")
-            ageEt!!.setSelection(0)
-            cityCountryEt!!.setText("")
-            weightEt!!.setSelection(0)
-            heightEt!!.setSelection(0)
-            activitySpinner!!.setSelection(0)
-            sexSpinner!!.setSelection(0)
-        }
-        else
-        {
-            inCamera = false
-        }
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+
+        Log.d("fullName from onSaveInstanceState", fullNameEt!!.text.toString())
 
         outState.putString("fullName", fullNameEt!!.text.toString())
         outState.putInt("age", ageEt!!.selectedItemPosition)
@@ -175,6 +159,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     mAppViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
                         picturePath!!, weight!!, height!!, age!!)
+
+                    fullNameEt!!.setText("")
+                    ageEt!!.setSelection(0)
+                    cityCountryEt!!.setText("")
+                    weightEt!!.setSelection(0)
+                    heightEt!!.setSelection(0)
+                    activitySpinner!!.setSelection(0)
+                    sexSpinner!!.setSelection(0)
 
                     startActivity(drawerActivityIntent)
                 }
