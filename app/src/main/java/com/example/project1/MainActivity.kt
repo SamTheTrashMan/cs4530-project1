@@ -42,6 +42,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var menuActivityIntent: Intent? = null
     private var drawerActivityIntent: Intent? = null
 
+    private var inCamera: Boolean = false
+
     private val mAppViewModel: AppViewModel by viewModels {
         AppViewModelFactory((application as AppApplication).repository)
     }
@@ -110,19 +112,26 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-
-        fullNameEt!!.setText("")
-        ageEt!!.setSelection(0)
-        cityCountryEt!!.setText("")
-        weightEt!!.setSelection(0)
-        heightEt!!.setSelection(0)
-        activitySpinner!!.setSelection(0)
-        sexSpinner!!.setSelection(0)
+        if(!inCamera)
+        {
+            fullNameEt!!.setText("")
+            ageEt!!.setSelection(0)
+            cityCountryEt!!.setText("")
+            weightEt!!.setSelection(0)
+            heightEt!!.setSelection(0)
+            activitySpinner!!.setSelection(0)
+            sexSpinner!!.setSelection(0)
+        }
+        else
+        {
+            inCamera = false
+        }
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.buttonPicture -> {
+                inCamera = true
                 val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 try {
                     cameraActivity.launch(cameraIntent)
