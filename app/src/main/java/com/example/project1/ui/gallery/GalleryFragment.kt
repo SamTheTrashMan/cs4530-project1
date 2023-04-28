@@ -18,10 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import com.example.project1.AppApplication
-import com.example.project1.AppViewModel
-import com.example.project1.AppViewModelFactory
-import com.example.project1.UserTable
 import com.example.project1.databinding.FragmentGalleryBinding
 import com.example.project1.databinding.FragmentHomeBinding
 import com.example.project1.ui.home.HomeViewModel
@@ -32,8 +28,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 import androidx.lifecycle.Observer
-
-
+import com.example.project1.*
 
 
 class GalleryFragment : Fragment(), View.OnClickListener {
@@ -51,9 +46,6 @@ class GalleryFragment : Fragment(), View.OnClickListener {
     private var heightEt: Spinner? = null
     private var activitySpinner: Spinner? = null
     private var sexSpinner: Spinner? = null
-
-
-
 
     private var _binding: FragmentGalleryBinding? = null
     private var picturePath: String? = ""
@@ -122,7 +114,7 @@ class GalleryFragment : Fragment(), View.OnClickListener {
 
 
             //set profile picture image
-            if (picturePath != null) {
+            if (!picturePath.isNullOrBlank()) {
                 val thumbnail = BitmapFactory.decodeFile(picturePath)
                 (binding.imageViewPicture2).setImageBitmap(thumbnail)
             }
@@ -306,8 +298,13 @@ class GalleryFragment : Fragment(), View.OnClickListener {
             val extras = result.data!!.extras
             picture = extras!!["data"] as Bitmap?
             if (isExternalStorageWritable) {
+                val weight = weightEt!!.selectedItem.toString()
+                val height = heightEt!!.selectedItem.toString()
+                val age = ageEt!!.selectedItem.toString()
                 picturePath = saveImage(picture)
-                requireActivity().intent.putExtra("picturePath", picturePath)
+
+                appViewModel.setUserData(fullName!!, cityCountry!!, activityLevel!!, sex!!,
+                    picturePath!!, weight!!, height!!, age!!)
             } else {
                 Toast.makeText(requireContext(), "External storage not writable.", Toast.LENGTH_SHORT).show()
             }

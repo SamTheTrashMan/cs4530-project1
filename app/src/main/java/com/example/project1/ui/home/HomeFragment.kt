@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
@@ -27,6 +28,7 @@ import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
 import androidx.lifecycle.Observer
+import org.w3c.dom.Text
 import kotlin.math.roundToInt
 
 
@@ -57,6 +59,15 @@ class HomeFragment : Fragment(), View.OnClickListener {
         binding.textViewLowTemp.visibility = INVISIBLE
         binding.textViewCurrTemp.visibility = INVISIBLE
 
+        if (savedInstanceState != null) {
+            binding.textViewHighTemp.text = savedInstanceState.getString("highTemp")
+            binding.textViewCurrTemp.text = savedInstanceState.getString("currTemp")
+            binding.textViewLowTemp.text = savedInstanceState.getString("lowTemp")
+
+            binding.textViewHighTemp.visibility = View.VISIBLE
+            binding.textViewLowTemp.visibility = View.VISIBLE
+            binding.textViewCurrTemp.visibility = View.VISIBLE
+        }
 
         appViewModel.userData.observe(viewLifecycleOwner, userDataObserver)
         appViewModel.data.observe(viewLifecycleOwner, liveDataObserver)
@@ -112,22 +123,21 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putString("currTemp", binding.textViewCurrTemp.text.toString())
-        outState.putString("lowTemp", binding.textViewLowTemp.text.toString())
-        outState.putString("highTemp", binding.textViewHighTemp.text.toString())
+        outState.putString("currTemp", view?.findViewById<TextView>(R.id.textViewCurrTemp).toString())
+        outState.putString("lowTemp", view?.findViewById<TextView>(R.id.textViewLowTemp).toString())
+        outState.putString("highTemp", view?.findViewById<TextView>(R.id.textViewHighTemp).toString())
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState != null) {
-            binding.textViewCurrTemp.text = savedInstanceState!!.getString("currTemp")
-            binding.textViewLowTemp.text = savedInstanceState!!.getString("lowTemp")
-            binding.textViewHighTemp.text = savedInstanceState!!.getString("highTemp")
+            binding.textViewCurrTemp.text = savedInstanceState.getString("currTemp")
+            binding.textViewLowTemp.text = savedInstanceState.getString("lowTemp")
+            binding.textViewHighTemp.text = savedInstanceState.getString("highTemp")
         }
     }
 
@@ -177,7 +187,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 //            Log.d("cityCountry", user.cityCountry!!)
 
             picturePath = user.picturePath
-            if (picturePath != null) {
+            if (!picturePath.isNullOrBlank()) {
                 val thumbnail = BitmapFactory.decodeFile(picturePath)
                 (binding.imageViewPicture).setImageBitmap(thumbnail)
             }

@@ -106,8 +106,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         signupButton!!.setOnClickListener(this)
         cameraButton!!.setOnClickListener(this)
-
-
     }
 
     override fun onResume() {
@@ -120,7 +118,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         heightEt!!.setSelection(0)
         activitySpinner!!.setSelection(0)
         sexSpinner!!.setSelection(0)
-
     }
 
     override fun onClick(view: View) {
@@ -148,8 +145,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                         picturePath!!, weight!!, height!!, age!!)
 
                     startActivity(drawerActivityIntent)
-
-
                 }
             }
         }
